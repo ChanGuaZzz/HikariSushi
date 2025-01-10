@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,body {
+  font-family: 'Nunito', sans-serif;
+  height: 100%;
+}
+
+.inputlogin{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.btnlogin{
+  width: 100%;
+  background: #e0e0e0;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow:  7px 7px 18px #808080,
+             -7px -7px 18px #ffffff;
+}
+.btnlogin:hover {
+  box-shadow: 0 0 0 0;
+  background-color: #d3d2d2;
+}
+
+.changeLogin{
+  color: #bd07bd;
+  text-decoration:underline ;
+  cursor: pointer;
+}
