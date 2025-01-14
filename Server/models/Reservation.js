@@ -52,6 +52,10 @@ Reservation.init(
         isEmail: true,
       },
     },
+    customerPhone: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     reservationDate: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -66,10 +70,6 @@ Reservation.init(
     tableNumber: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    specialRequest: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     status: {
       type: DataTypes.ENUM('pending', 'confirmed', 'cancelled'),

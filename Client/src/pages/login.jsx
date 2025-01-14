@@ -83,11 +83,12 @@ function Login() {
   }, [confirmPassword, password]);
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
-          <div className="text-center mb-3">
-            <div className="flex justify-center mb-4">
-              <Utensils className="h-12 w-12 text-orange-600" />
+      <div className="min-h-screen  bg-gradient-to-br from-[#352c29] to-[#000000] flex items-center justify-center">
+        <div className={`bg-white p-8 rounded-lg flex flex-col ${!isInLogin?"sm:flex-row sm:max-w-2xl sm:w-[80%]":"sm:max-w-md"} justify-center sm:justify-around shadow-2xl w-full min-h-screen sm:min-h-0  `}>
+          <div className="text-center mb-3 flex flex-col items-center justify-center bg-[#]">
+            <div className={`flex flex-col justify-center mb-4 `}>
+              <h1 className="simbol text-[#ff3e01] text-8xl">i</h1>
+              <h1 className="title text-[#5f4842]">Hikari</h1>
             </div>
             <h2 className="text-3xl font-bold text-gray-800">{isInLogin ? "Bienvenido" : "Crear Cuenta"} </h2>
             <p className="text-gray-600">Inicia sesión para hacer tu reserva</p>
@@ -105,7 +106,7 @@ function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 w-full text-black px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="pl-10 w-full text-black px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="tu@email.com"
                   required
                 />
@@ -124,7 +125,7 @@ function Login() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="pl-10 w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="pl-10 w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Antonio Pérez Lopez"
                       required
                     />
@@ -140,7 +141,7 @@ function Login() {
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="pl-10 w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="pl-10 w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="688297781"
                       maxLength={10}
                       required
@@ -161,7 +162,7 @@ function Login() {
                   value={password}
                   minLength={5}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 w-full px-4 p-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="pl-10 w-full px-4 p-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="••••••••"
                   required
                 />
@@ -179,7 +180,7 @@ function Login() {
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10 w-full px-4 p-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="pl-10 w-full px-4 p-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="••••••••"
                     required
                     minLength={5}
@@ -188,18 +189,18 @@ function Login() {
               </div>
             )}
 
-            <h1 className="text-orange-800 text-center h-4 text-[13px] text-wrap ">{errorpassword && !isInLogin  && "Las contraseñas no coinciden"} </h1>
+            <h1 className="text-blue-800 text-center h-4 text-[13px] text-wrap ">{errorpassword && !isInLogin && "Las contraseñas no coinciden"} </h1>
             {errorpassword && !isInLogin ? (
               <button
                 disabled
-                className="w-full bg-orange-600 opacity-45 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
+                className="w-full bg-[#ff3e01] hover:bg-red-700 opacity-45 text-white py-2 px-4 rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 {isInLogin ? "Iniciar Sesión" : "Registrarse"}
               </button>
             ) : (
               <button
                 type="submit"
-                className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
+                className="w-full bg-[#ff3e01] hover:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
               >
                 {isInLogin ? "Iniciar Sesión" : "Registrarse"}
               </button>
@@ -211,7 +212,7 @@ function Login() {
                 onClick={() => {
                   setisInLogin(!isInLogin);
                 }}
-                className="text-orange-600 hover:text-orange-700 font-medium"
+                className="text-[#ff3e01] hover:text-red-700 font-medium"
               >
                 {isInLogin ? "¿No tienes cuenta? Regístrate" : " ¿Ya tienes cuenta? Inicia sesión"}
               </button>

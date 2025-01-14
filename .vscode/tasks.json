@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Client Dev",
+      "type": "shell",
+      "command": "cmd",
+      "args": ["/c", "cd client && npm run dev"],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run server Dev",
+      "type": "shell",
+      "command": "cmd",
+      "args": ["/c", "cd Server && npm start"],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

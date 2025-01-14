@@ -2,8 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+@font-face {
+  font-family: 'Hikari';
+  src: url(../public/ChineseBrush-nnP.ttf);
+}
+
+@font-face {
+  font-family: 'RegularFont';
+  src: url(../public/Fabrica-ZOjx.otf);
+}
+@font-face {
+  font-family: 'Simbol';
+  src: url(../public/KrChineseZodiac-BGz5.ttf);
+}
+
+.loadinganimation div {
+  animation: loading 1s infinite;
+}
+
+.loadinganimation div:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loadinganimation div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loadinganimation div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+
+.simbol {
+  font-family: 'Simbol';
+}
+
+.title {
+  font-size: 2rem;
+  font-family: 'Hikari';
+}
+
 html,body {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'RegularFont';
   height: 100%;
 }
 
