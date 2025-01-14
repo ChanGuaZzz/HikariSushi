@@ -56,11 +56,15 @@ Reservation.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    reservationDate: {
+    date: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    numberOfGuests: {
+    hour: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
+    people: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -69,7 +73,7 @@ Reservation.init(
     },
     tableNumber: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     status: {
       type: DataTypes.ENUM('pending', 'confirmed', 'cancelled'),
@@ -82,4 +86,4 @@ Reservation.init(
   }
 );
 
-export { Reservation };
+export default Reservation ;

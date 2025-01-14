@@ -5,6 +5,7 @@ import { DoorOpen, Calendar, Clock, Users } from "lucide-react";
 import { use } from "react";
 import ReservationsBox from "../components/ReservationsBox";
 import Loading from "../components/loading";
+import ModalMessage from "../components/modalMessage";
 
 function Hikari() {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ function Hikari() {
   const [AvailableHours, setAvailableHours] = useState([]);
   const [Reservations, setReservations] = useState([{}]);
   const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState(false);
+  const [message, setMessage] = useState("");
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
@@ -57,16 +60,23 @@ function Hikari() {
         hour: selectedHour,
         people: selectedPeople,
       };
-      // axios
-      //   .post("http://localhost:3000/reserve", reservation, { withCredentials: true })
-      //   .then((res) => {
-      //     console.log(res.data);
-      //     getReservations();
-      //     setLoading(false);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      console.log(reservation);
+      axios
+        .post("http://localhost:3000/reserve", {reservation}, { withCredentials: true })
+        .then((res) => {
+          console.log(res.data.message);
+          getReservations();
+          setLoading(false);
+          setMessage(res.data.message);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          setMessage(err.response.data.message);
+          console.log(err.response.data.message);
+        });
+
+        setModal(true);
 
       //comprueba si tengo una reserva en la misma fecha, solo se puede tener una reserva por fecha,
     };
@@ -129,6 +139,7 @@ function Hikari() {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#352c29] to-[#000000] flex flex-col items-center  ">
       {loading && <Loading />}
+      {modal && <ModalMessage message={message} onClose={()=>{setModal(false)}}/>}
       <div className=" flex absolute w-full justify-center items-center top-6 ">
         <h1 className="simbol text-4xl px-1 text-[#ff3e01]">i</h1>
         <h1 className=" title px-1 text-[#]">Hikari</h1>
