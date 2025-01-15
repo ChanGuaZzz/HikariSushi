@@ -24,31 +24,37 @@ function Hikari() {
 
   useEffect(() => {
     if (selectedDate) {
-      // axios
-      //   .get(`http://localhost:3000/gethours?date=${selectedDate}`)
-      //   .then((res) => {
-      //     console.log(res.data);
-      //     setAvailableHours(res.data);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      axios
+        .get(`http://localhost:3000/gethours?date=${selectedDate}`)
+        .then((res) => {
+          console.log(res.data);
+          setAvailableHours(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
       //Se pueden 4 reservas por hora, si hay 4 reservas en una hora, se hace una consulta a la base de datos buscando las reservas en esa fecha y hora y si hay 4, se deshabilita esa hora
-      setAvailableHours([{ "9:00": false }, { "12:00": true }, { "14:00": false }, { "16:00": false }, { "19:00": false }]);
+      // setAvailableHours([{ "9:00": false }, { "12:00": true }, { "14:00": false }, { "16:00": false }, { "19:00": false }]);
     }
   }, [selectedDate]);
 
   const getReservations = async () => {
-    // axios
-    //   .get("http://localhost:3000/getreservations", { withCredentials: true })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     setReservations(res.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    axios
+      .get("http://localhost:3000/getreservations", { withCredentials: true })
+      .then((res) => {
+        console.log(res.data);
+        setReservations(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+      // setReservations([
+      //   { date: "2025-01-01", hour: "12:00", people: 2, status: "confirmed" },
+      //   { date: "2025-01-01", hour: "14:00", people: 4, status: "canceled" },
+      //   { date: "2025-01-01", hour: "16:00", people: 6, status: "pending" },
+      // ]);
     }
     //devuelve un array de objetos con las reservas
 
@@ -90,13 +96,25 @@ function Hikari() {
   // Function to check if a date is a weekend
   const isWeekend = (date) => {
     const d = new Date(date);
-    return d.getDay() === 0 || d.getDay() === 6;
+    return d.getDay() === 0 ;
   };
 
   const handleDateChange = (e) => {
-    const date = e.target.value;
-    if (!isWeekend(date)) {
-      setSelectedDate(date);
+    const date = new Date(e.target.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Establecer la hora a 00:00:00 para comparar solo la fecha
+
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 5); // Fecha máxima permitida (5 días después de hoy)
+
+    if (date > maxDate) {
+      setModal(true);
+      setMessage('No es posible reservar más de 5 días antes de la fecha.');
+    } else if (!isWeekend(date)) {
+      setSelectedDate(e.target.value);
+    }else{
+      setModal(true);
+      setMessage('No es posible reservar los domingo.');
     }
   };
 
@@ -117,11 +135,7 @@ function Hikari() {
         console.log(err);
       });
 
-    setReservations([
-      { date: "2025-01-01", hour: "12:00", people: 2, status: "confirmed" },
-      { date: "2025-01-01", hour: "14:00", people: 4, status: "canceled" },
-      { date: "2025-01-01", hour: "16:00", people: 6, status: "pending" },
-    ]);
+    
   }, []);
 
   const handleLogout = () => {
@@ -188,11 +202,9 @@ function Hikari() {
                       onChange={() => setSelectedHour(event.target.value)}
                     >
                       <option value="">Selecciona una hora</option>
-                      {AvailableHours.map((hourObj, index) => {
-                        const hour = Object.keys(hourObj)[0];
-                        const isDisabled = !hourObj[hour];
+                      {AvailableHours.map((hour, index) => {
                         return (
-                          <option key={index} value={hour} disabled={isDisabled}>
+                          <option key={index} value={hour}>
                             {hour}
                           </option>
                         );

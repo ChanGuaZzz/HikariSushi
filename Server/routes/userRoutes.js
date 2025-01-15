@@ -13,7 +13,7 @@ router.post("/login", loginUser);
 router.get("/logout",logoutUser);
 router.post("/reserve", reserveTable);
 router.get("/getreservations", getReservations);
-router.get("//gethours", getAvailableHours);
+router.get("/gethours", getAvailableHours);
 
 
 export default router;
