@@ -51,7 +51,7 @@ const reserveTable = async (req, res) => {
 
     console.log("Reserva creada con exito");
 
-    return res.status(201).json({ message: "Reserva creada con exito" });
+    return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
 
     console.log(reservation);
   } catch (error) {
