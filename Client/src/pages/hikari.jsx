@@ -17,6 +17,7 @@ function Hikari() {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
   const [message, setMessage] = useState("");
+  const [isreserved, setIsReserved] = useState(false);
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
@@ -74,12 +75,14 @@ function Hikari() {
           getReservations();
           setLoading(false);
           setMessage(res.data.message);
+          setIsReserved(true);
         })
         .catch((err) => {
           console.log(err);
           setLoading(false);
           setMessage(err.response.data.message);
           console.log(err.response.data.message);
+          setIsReserved(false);
         });
 
         setModal(true);
@@ -153,7 +156,7 @@ function Hikari() {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#352c29] to-[#000000] flex flex-col items-center  ">
       {loading && <Loading />}
-      {modal && <ModalMessage message={message} onClose={()=>{setModal(false)}}/>}
+      {modal && <ModalMessage message={message} iscorrect={isreserved} onClose={()=>{setModal(false)}}/>}
       <div className=" flex absolute w-full justify-center items-center top-6 ">
         <h1 className="simbol text-4xl px-1 text-[#ff3e01]">i</h1>
         <h1 className=" title px-1 text-[#]">Hikari</h1>
