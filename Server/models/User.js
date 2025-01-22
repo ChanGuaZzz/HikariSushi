@@ -44,6 +44,10 @@ User.init(
       type: DataTypes.CHAR(255),
       allowNull: false,
     },
+    role: {
+      type: DataTypes.ENUM('client', 'admin'),
+      defaultValue: 'client',
+    },
   },
   {
     sequelize, // Instancia de Sequelize

@@ -12,9 +12,8 @@ const registerUser = async (req, res) => {
 
   if (!Number.isInteger(Number(phone))) {
     console.log("El teléfono es incorrecto");
-    return res.status(400).json({ message: 'El teléfono es incorrecto' });
+    return res.status(400).json({ message: "El teléfono es incorrecto" });
   }
-
 
   const userExists = await User.findOne({
     where: {
@@ -62,49 +61,78 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-    try {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } });
+console.log("USUARIO", req.session);
+    if (user && user.checkPassword(password)) {
+      req.session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      };
 
-  if (user && user.checkPassword(password)) {
-    req.session.user = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-    };
+      req.session.save();
+      console.log("SESSIONES", req.session);
+      console.log("LOGUEADO CORRECTAMENTE");
 
-    req.session.save();
-    console.log("SESSIONES", req.session);
-    console.log("LOGUEADO CORRECTAMENTE");
-
-    res.status(200).json({
-      session: req.session,
-      message: "User logged in successfully",
-    });
-  } else {
-    res.status(401).json({ message: "Invalid email or password" });
-    console.log("ERROR AL LOGUEAR");
-  }
-} catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+      res.status(200).json({
+        session: req.session,
+        message: "User logged in successfully",
+      });
+    } else {
+      res.status(401).json({ message: "Invalid email or password" });
+      console.log("ERROR AL LOGUEAR");
+    }
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
 
 const logoutUser = (req, res) => {
-    console.log("LOGOUT");
-    console.log(req.session);
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Error al cerrar la sesión:', err);
-        return res.status(500).json({ message: 'No se pudo cerrar la sesión' });
-      } else {
-        console.log(req.session);
-        return res.status(200).json({ message: 'Sesión cerrada exitosamente' });
-      }
-    });
-  };
+  console.log("LOGOUT");
+  console.log(req.session);
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error al cerrar la sesión:", err);
+      return res.status(500).json({ message: "No se pudo cerrar la sesión" });
+    } else {
+      console.log(req.session);
+      return res.status(200).json({ message: "Sesión cerrada exitosamente" });
+    }
+  });
+};
 
-export { registerUser, loginUser, logoutUser };
+const changePassword = async (req, res) => {
+  try {
+    const { email, password, newPassword } = req.body;
+
+    if (!email || !password || !newPassword) {
+      return res.status(400).json({ message: "Missing data" });
+    }
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.checkPassword(password)) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error al cambiar la contraseña:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+export { registerUser, loginUser, logoutUser, changePassword };

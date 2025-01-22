@@ -1,13 +1,20 @@
-import dotenv from 'dotenv';
-import sequelize from './config/db.js';
-import userRoutes from './routes/userRoutes.js';
-import app from './app.js';
+import dotenv from "dotenv";
+import sequelize from "./config/db.js";
+import { server } from "./app.js";
+import User from "./models/User.js";
+import bcrypt from "bcrypt";
+// import "./routes/socketRoutes.js"
 dotenv.config();
-
-app.use('/', userRoutes);
-
-sequelize.sync({alter: true}).then(() => {
-  app.listen(process.env.PORT || 3000, () => console.log('Server running on port 3000'));
+sequelize.sync({ alter: true }).then(() => {
+  //CREA UN USUARIO ADMINISTRADOR
+  const hashedPass = bcrypt.hashSync("admin", 10);
+  User.destroy({ where: { role: "admin" } });
+  User.create({
+    name: "admin",
+    email: "admin@admin.com",
+    phone: 0,
+    password: hashedPass,
+    role: "admin",
+  });
+  server.listen(process.env.PORT || 3000, () => console.log("Server running on port 3000"));
 });
-
-export default app;

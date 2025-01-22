@@ -32,6 +32,9 @@ const reserveTable = async (req, res) => {
       where: {
         date: new Date(date),
         customerPhone: req.session.user.phone,
+        status: {
+          [Op.or]: ["pending", "confirm"],
+        },
       },
     });
 
@@ -77,11 +80,28 @@ const getReservations = async (req, res) => {
       },
     });
 
+    if (req.session.user.role === "admin") {
+      const status = req.body.status;
+
+      if (!status) {
+        return res.status(400).json({ message: "missing data" });
+      }
+      const reservations = await Reservation.findAll({
+        where: {
+          status: status,
+        },
+        order: [["date", "ASC"]],
+      });
+
+      return res.status(200).json(reservations);
+    }
+
     const reservations = await Reservation.findAll({
       where: {
         customerPhone: req.session.user.phone,
       },
       order: [["date", "ASC"]],
+      limit: 5,
     });
 
     return res.status(200).json(reservations);
@@ -113,15 +133,44 @@ const getAvailableHours = async (req, res) => {
     const allHours = ["9:00", "12:00", "14:00", "16:00", "21:00"];
     const maxReservationsPerHour = 4;
 
-    const availableHours = allHours.filter(hour => {
+    const availableHours = allHours.filter((hour) => {
       return (reservedHoursCount[hour] || 0) < maxReservationsPerHour;
     });
 
     return res.status(200).json(availableHours);
   } catch (error) {
-    console.error('Error al obtener las horas disponibles:', error);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    console.error("Error al obtener las horas disponibles:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
 
-export { reserveTable, getReservations, getAvailableHours };
+const reservationManage = async (req, res) => {
+  const { id, status } = req.body;
+
+  if (!id || !status) {
+    return res.status(400).json({ message: "missing data" });
+  }
+
+  console.log(id, status);
+  if (status !== "confirmed" && status !== "cancelled") {
+    return res.status(400).json({ message: "Invalid status" });
+  }
+
+  try {
+    const reservation = await Reservation.findByPk(id);
+
+    if (!reservation) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+
+    reservation.status = status;
+    await reservation.save();
+
+    return res.status(200).json({ message: "Reservation updated successfully" });
+  } catch (error) {
+    console.error("Error al actualizar la reserva:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
+export { reserveTable, getReservations, getAvailableHours, reservationManage };
