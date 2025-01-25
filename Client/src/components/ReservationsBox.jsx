@@ -38,6 +38,7 @@ function ReservationsBox({ reservation, role, update }) {
         .post("http://localhost:3000/reservationManage", { id: reservation.id, status: "cancelled" })
         .then((res) => {
           console.log(res);
+          update();
         })
         .catch((err) => {
           console.log(err);
@@ -48,12 +49,12 @@ function ReservationsBox({ reservation, role, update }) {
         .post("http://localhost:3000/reservationManage", { id: reservation.id, status: "confirmed" })
         .then((res) => {
           console.log(res);
+          update();
         })
         .catch((err) => {
           console.log(err);
         });
     }
-    update();
   };
 
   const capitalizedDate = capitalizeFirstLetter(formattedDate);

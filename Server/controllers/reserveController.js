@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import Reservation from "../models/Reservation.js";
 
 const reserveTable = async (req, res) => {
@@ -18,6 +18,9 @@ const reserveTable = async (req, res) => {
       where: {
         date: new Date(date),
         hour: `${hour}:00`,
+        status: {
+          [Op.or]: ["pending", "confirm"],
+        },
       },
     });
 
@@ -95,13 +98,50 @@ const getReservations = async (req, res) => {
 
       return res.status(200).json(reservations);
     }
-
     const reservations = await Reservation.findAll({
+      attributes: [
+        'date',
+        'hour',
+        'people',
+        'customerName',
+        'customerEmail',
+        'customerPhone',
+        'tableNumber',
+        "date",
+        [
+          Sequelize.literal(`
+          CASE
+            WHEN MAX(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) = 1 THEN 'confirmed'
+            WHEN MAX(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) = 1 THEN 'pending'
+            ELSE 'cancelled'
+          END
+        `),
+          "status",
+        ],
+        [
+          Sequelize.literal(`
+          (SELECT id
+           FROM Reservations AS r
+           WHERE r.date = Reservation.date
+           AND r.status = (
+             SELECT CASE
+               WHEN MAX(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) = 1 THEN 'confirmed'
+               WHEN MAX(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) = 1 THEN 'pending'
+               ELSE 'cancelled'
+             END
+             FROM Reservations
+             WHERE date = Reservation.date
+           )
+           LIMIT 1)
+        `),
+          "id",
+        ],
+      ],
       where: {
         customerPhone: req.session.user.phone,
       },
+      group: ["date"],
       order: [["date", "ASC"]],
-      limit: 5,
     });
 
     return res.status(200).json(reservations);
@@ -122,6 +162,9 @@ const getAvailableHours = async (req, res) => {
     const reservations = await Reservation.findAll({
       where: {
         date: new Date(date),
+        status: {
+          [Op.or]: ["pending", "confirm"],
+        },
       },
     });
 
@@ -131,7 +174,7 @@ const getAvailableHours = async (req, res) => {
     }, {});
 
     const allHours = ["9:00", "12:00", "14:00", "16:00", "21:00"];
-    const maxReservationsPerHour = 4;
+    const maxReservationsPerHour = 5;
 
     const availableHours = allHours.filter((hour) => {
       return (reservedHoursCount[hour] || 0) < maxReservationsPerHour;

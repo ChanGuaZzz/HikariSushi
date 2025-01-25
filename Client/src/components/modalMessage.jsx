@@ -15,7 +15,7 @@ function ModalMessage({ message, onClose, iscorrect }) {
             ) : (
               <BadgeX className="text-red-600" size={50} />
             )}
-          <p className="mt-5">{message}</p>
+          <p className="mt-5 text-center">{message}</p>
         </div>
       </div>
     </div>

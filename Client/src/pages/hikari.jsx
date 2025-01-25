@@ -126,7 +126,9 @@ function Hikari() {
   };
 
   const putReservations = async (role) => {
+    console.log(role, "entroooo");
     if (role == "client") {
+console.log("entro a client");
       getReservations().then((res) => {
         setReservations(res);
       });
@@ -292,7 +294,7 @@ function Hikari() {
               <h1 className=" w-full px-2 text-left text-xl mb-5"> Pendientes</h1>
 
               {pendingReservations.map((reservation, index) => (
-                <ReservationsBox key={index} update={()=>{putReservations("client")}} role={role} reservation={reservation} />
+                <ReservationsBox key={index} update={putReservations} role={role} reservation={reservation} />
               ))}
             </div>
           )}
@@ -303,7 +305,7 @@ function Hikari() {
               <h1 className=" w-full px-2 text-left text-xl">Mis Reservas</h1>
 
               {Reservations.map((reservation, index) => (
-                <ReservationsBox key={index}  update={putReservations} role={role} reservation={reservation} />
+                <ReservationsBox key={index}  update={()=>{putReservations("client")}} role={role} reservation={reservation} />
               ))}
             </>
           ) : (
