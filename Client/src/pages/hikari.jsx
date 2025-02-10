@@ -6,6 +6,8 @@ import { use } from "react";
 import ReservationsBox from "../components/ReservationsBox";
 import Loading from "../components/loading";
 import ModalMessage from "../components/modalMessage";
+import GeneralModal from "../components/generalmodal";
+import ChangePassword from "../components/changepassword";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
 //   withCredentials: true,
@@ -22,6 +24,7 @@ function Hikari() {
   const [pendingReservations, setPendingReservations] = useState([{}]);
   const [confirmedReservations, setConfirmedReservations] = useState([{}]);
   const [cancelledReservations, setCancelledReservations] = useState([{}]);
+  const [changepass, setchangepass] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
   const [message, setMessage] = useState("");
@@ -189,6 +192,11 @@ console.log("entro a client");
           }}
         />
       )}
+      {changepass && (
+        <GeneralModal onClose={()=>{setchangepass(false)}}>
+          <ChangePassword />
+        </GeneralModal>
+      )}
       <div className=" flex absolute w-full justify-center items-center top-6 ">
         <h1 className="simbol text-4xl px-1 text-[#ff3e01]">i</h1>
         <h1 className=" title px-1 text-[#]">Hikari</h1>
@@ -325,6 +333,8 @@ console.log("entro a client");
             </>
           )}
         </div>
+        
+        <button className="py-3 bg-[#dd300c] rounded-lg px-[50px]" onClick={()=>{setchangepass(true)}}>Cambiar contraseña</button>
       </div>
     </div>
   );

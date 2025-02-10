@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, logoutUser, changePassword } from "../controllers/userController.js";
+import { registerUser, loginUser, logoutUser, changeData } from "../controllers/userController.js";
 import { reserveTable, getAvailableHours, getReservations, reservationManage } from "../controllers/reserveController.js";
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.post("/reserve", reserveTable);
 router.post("/getreservations", getReservations);
 router.get("/gethours", getAvailableHours);
 router.post("/reservationManage", reservationManage);
-router.post("/changepassword",  changePassword);
+router.post("/changeData",  changeData);
 
 
 export default router;

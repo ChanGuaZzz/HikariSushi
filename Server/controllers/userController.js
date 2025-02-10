@@ -65,7 +65,7 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ where: { email } });
-console.log("USUARIO", req.session);
+    console.log("USUARIO", req.session);
     if (user && user.checkPassword(password)) {
       req.session.user = {
         id: user.id,
@@ -107,9 +107,33 @@ const logoutUser = (req, res) => {
   });
 };
 
-const changePassword = async (req, res) => {
+const changeData = async (req, res) => {
   try {
-    const { email, password, newPassword } = req.body;
+    let { isemail, email, newEmail } = req.body;
+
+    if (!email) {
+      if (req.session.user.email) {
+        email = req.session.user.email;
+        console.log("EMAIL", email);
+      }
+    }
+    if (isemail) {
+      if (!email || !newEmail) {
+        return res.status(400).json({ message: "Missing data in email" });
+      }
+
+      const userExists = await User.findOne({ where: { email: newEmail } });
+
+      if (userExists) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
+      user.email = isemail;
+      await user.save();
+
+      return res.status(200).json({ message: "Email updated successfully" });
+    }
+    const { password, newPassword } = req.body;
 
     if (!email || !password || !newPassword) {
       return res.status(400).json({ message: "Missing data" });
@@ -135,4 +159,4 @@ const changePassword = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
-export { registerUser, loginUser, logoutUser, changePassword };
+export { registerUser, loginUser, logoutUser, changeData };
