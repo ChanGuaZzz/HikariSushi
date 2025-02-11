@@ -156,9 +156,9 @@ function Hikari() {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
-        //console.log(res.data.user);
+        console.log(res);
         if (!res.data.user) {
-          navigate("/login");
+          // navigate("/login");
         } else {
           putReservations(res.data.user.role);
           setRole(res.data.user.role);
