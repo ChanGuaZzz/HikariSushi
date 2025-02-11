@@ -4,17 +4,17 @@ import { reserveTable, getAvailableHours, getReservations, reservationManage } f
 
 const router = express.Router();
 
-router.post("/getSession", (req, res) => {
+router.post("/api/getSession", (req, res) => {
   res.json(req.session);
 });
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/logout",logoutUser);
-router.post("/changeData",  changeData);
-router.post("/reserve", reserveTable);
-router.post("/getreservations", getReservations);
-router.get("/gethours", getAvailableHours);
-router.post("/reservationManage", reservationManage);
+router.post("/api/register", registerUser);
+router.post("/api/login", loginUser);
+router.get("/api/logout",logoutUser);
+router.post("/api/changeData",  changeData);
+router.post("/api/reserve", reserveTable);
+router.post("/api/getreservations", getReservations);
+router.get("/api/gethours", getAvailableHours);
+router.post("/api/reservationManage", reservationManage);
 
 
 export default router;
