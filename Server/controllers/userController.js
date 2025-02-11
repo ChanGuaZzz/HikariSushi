@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import User from "../models/User.js";
+import Reservation from "../models/Reservation.js";
 import { Op } from "sequelize";
 import transporter from "../config/mailer.js";
 
@@ -49,7 +50,7 @@ const registerUser = async (req, res) => {
       await transporter
         .sendMail({
           from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
-          to: reservation.customerEmail, // list of receivers
+          to: user.customerEmail, // list of receivers
           subject: "Bienvenido a Hikari", // Subject line
           html: html, // html body
         })
