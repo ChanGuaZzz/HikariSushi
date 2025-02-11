@@ -31,7 +31,7 @@ function Login() {
       .then((res) => {
         console.log(res, "getsession");
         if (res.data.user) {
-          navigate("/hikari");
+          // navigate("/hikari");
         }
       })
       .catch((err) => {
