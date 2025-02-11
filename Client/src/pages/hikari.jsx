@@ -41,7 +41,7 @@ function Hikari() {
   useEffect(() => {
     if (selectedDate) {
       axios
-        .post(`${import.meta.env.VITE_API_URL}/api/gethours?date=${selectedDate}`)
+        .get(`${import.meta.env.VITE_API_URL}/api/gethours?date=${selectedDate}`)
         .then((res) => {
           //console.log(res.data);
           setAvailableHours(res.data);
@@ -154,7 +154,7 @@ function Hikari() {
 
   useEffect(() => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
         console.log(res);
         if (!res.data.user) {

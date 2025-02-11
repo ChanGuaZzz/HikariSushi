@@ -25,19 +25,6 @@ function Login() {
     }
   }, [error]);
 
-  useEffect(() => {
-    axios
-      .post(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
-      .then((res) => {
-        console.log(res, "getsession");
-        if (res.data.user) {
-          navigate("/hikari");
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   const login = async (email, password) => {
     axios
@@ -79,7 +66,7 @@ function Login() {
 
   useEffect(() => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
         //console.log(res.data.user);
         if (res.data.user) {
