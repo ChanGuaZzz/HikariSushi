@@ -27,11 +27,11 @@ function Login() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/getSession`, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
         console.log(res, "getsession");
         if (res.data.user) {
-          // navigate("/hikari");
+          navigate("/hikari");
         }
       })
       .catch((err) => {
@@ -79,7 +79,7 @@ function Login() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
         //console.log(res.data.user);
         if (res.data.user) {
