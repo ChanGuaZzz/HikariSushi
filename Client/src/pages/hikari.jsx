@@ -153,7 +153,6 @@ function Hikari() {
   };
 
   useEffect(() => {
-    console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL);
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/getSession`, { withCredentials: true })
       .then((res) => {
