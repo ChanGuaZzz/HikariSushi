@@ -29,9 +29,9 @@ function Login() {
     axios
       .post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password }, { withCredentials: true })
       .then((res) => {
-        //console.log(res.data);
+        console.log(res.data);
         setLoading(false);
-        navigate("/hikari");
+        // navigate("/hikari");
       })
       .catch((err) => {
         setLoading(false);
