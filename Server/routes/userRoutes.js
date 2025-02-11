@@ -4,7 +4,7 @@ import { reserveTable, getAvailableHours, getReservations, reservationManage } f
 
 const router = express.Router();
 
-router.post("/api/getSession", (req, res) => {
+router.get("/api/getSession", (req, res) => {
   res.json(req.session);
 });
 router.post("/api/register", registerUser);
