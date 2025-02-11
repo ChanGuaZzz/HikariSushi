@@ -25,6 +25,20 @@ function Login() {
     }
   }, [error]);
 
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/getSession`, { withCredentials: true })
+      .then((res) => {
+        console.log(res, "getsession");
+        if (res.data.user) {
+          navigate("/hikari");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const login = async (email, password) => {
     axios
       .post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password }, { withCredentials: true })

@@ -158,7 +158,7 @@ function Hikari() {
       .then((res) => {
         console.log(res);
         if (!res.data.user) {
-          // navigate("/login");
+          navigate("/login");
         } else {
           putReservations(res.data.user.role);
           setRole(res.data.user.role);
