@@ -3,6 +3,7 @@ import { Utensils, Mail, Lock, User, Phone } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { use } from "react";
+import Loading from "../components/loading";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ function Login() {
   const [error, setError] = useState("");
   const [errorpassword, setErrorpassword] = useState(false);
   const [isInLogin, setisInLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,15 +30,19 @@ function Login() {
       .post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password }, { withCredentials: true })
       .then((res) => {
         //console.log(res.data);
+        setLoading(false);
         navigate("/hikari");
       })
       .catch((err) => {
+        setLoading(false);
         //console.log(err.response.data.message);
         setError(err.response.data.message || "Error al crear usuario");
       });
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
+
     e.preventDefault();
     //console.log(email);
     //console.log(password);
@@ -83,6 +89,7 @@ function Login() {
   }, [confirmPassword, password]);
   return (
     <>
+    {loading&& <Loading/>}
       <div className="min-h-screen  bg-gradient-to-br from-[#352c29] to-[#000000] flex items-center justify-center">
         <div className={`bg-white p-8 rounded-lg flex flex-col ${!isInLogin?"sm:flex-row sm:max-w-2xl sm:w-[80%]":"sm:max-w-md"} justify-center sm:justify-around shadow-2xl w-full min-h-screen sm:min-h-0  `}>
           <div className="text-center mb-3 flex flex-col items-center justify-center bg-[#]">
