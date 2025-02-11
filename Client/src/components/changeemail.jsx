@@ -14,7 +14,7 @@ function ChangeEmail({setLoading}) {
     console.log(newEmail, confirmEmail);
     setLoading(true);
     axios
-      .post("http://localhost:3000/changeData", { isemail: true, newEmail }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/changeData`, { isemail: true, newEmail }, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         setSuccess(true);

@@ -38,9 +38,13 @@ function Hikari() {
   };
 
   useEffect(() => {
+    console.log(import.meta.env.VITE_API_URL, "LINKKKK?????");
+  }, []);
+
+  useEffect(() => {
     if (selectedDate) {
       axios
-        .get(`http://localhost:3000/gethours?date=${selectedDate}`)
+        .get(`${import.meta.env.VITE_API_URL}/gethours?date=${selectedDate}`)
         .then((res) => {
           console.log(res.data);
           setAvailableHours(res.data);
@@ -56,7 +60,7 @@ function Hikari() {
 
   const getReservations = async (status) => {
     try {
-      const res = await axios.post("http://localhost:3000/getreservations", { status: status }, { withCredentials: true });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/getreservations`, { status: status }, { withCredentials: true });
       console.log(res.data);
       return res.data;
     } catch (err) {
@@ -76,7 +80,7 @@ function Hikari() {
     };
     console.log(reservation);
     axios
-      .post("http://localhost:3000/reserve", { reservation }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/reserve`, { reservation }, { withCredentials: true })
       .then((res) => {
         console.log(res.data.message);
         putReservations(role);
@@ -153,7 +157,7 @@ function Hikari() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/getsession", { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/getsession`, { withCredentials: true })
       .then((res) => {
         console.log(res.data.user);
         if (!res.data.user) {
@@ -172,7 +176,7 @@ function Hikari() {
 
   const handleLogout = () => {
     axios
-      .get("http://localhost:3000/logout", { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/logout`, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         navigate("/login");
@@ -200,7 +204,7 @@ function Hikari() {
             setchangepass(false);
           }}
         >
-          <ChangePassword setLoading={setLoading}  />
+          <ChangePassword setLoading={setLoading} />
         </GeneralModal>
       )}
 

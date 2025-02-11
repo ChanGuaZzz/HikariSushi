@@ -16,7 +16,7 @@ function ChangePassword({setLoading}) {
     console.log(password, newPassword, confirmPassword);
 
     axios
-      .post("http://localhost:3000/changeData", { password, newPassword }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/changeData`, { password, newPassword }, { withCredentials: true })
       .then((res) => {
         setLoading(false);
         console.log(res.data);

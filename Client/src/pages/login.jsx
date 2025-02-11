@@ -25,7 +25,7 @@ function Login() {
 
   const login = async (email, password) => {
     axios
-      .post("http://localhost:3000/login", { email, password }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         navigate("/hikari");
@@ -45,7 +45,7 @@ function Login() {
       login(email, password);
     } else {
       axios
-        .post("http://localhost:3000/register", { email, password, name, phone })
+        .post(`${import.meta.env.VITE_API_URL}/register`, { email, password, name, phone })
         .then((res) => {
           console.log(res.data);
           login(email, password);
@@ -59,7 +59,7 @@ function Login() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/getsession", { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/getsession`, { withCredentials: true })
       .then((res) => {
         console.log(res.data.user);
         if (res.data.user) {
