@@ -27,7 +27,7 @@ function Login() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/getSession`, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/getSession`, { withCredentials: true })
       .then((res) => {
         console.log(res, "getsession");
         if (res.data.user) {
