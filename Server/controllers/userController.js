@@ -50,7 +50,7 @@ const registerUser = async (req, res) => {
       await transporter
         .sendMail({
           from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
-          to: user.customerEmail, // list of receivers
+          to: email, // list of receivers
           subject: "Bienvenido a Hikari", // Subject line
           html: html, // html body
         })
