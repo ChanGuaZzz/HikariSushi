@@ -13,13 +13,13 @@ function ChangePassword({setLoading}) {
     e.preventDefault();
     setLoading(true);
 
-    console.log(password, newPassword, confirmPassword);
+    //console.log(password, newPassword, confirmPassword);
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}/changeData`, { password, newPassword }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/changeData`, { password, newPassword }, { withCredentials: true })
       .then((res) => {
         setLoading(false);
-        console.log(res.data);
+        //console.log(res.data);
         setSuccess(true);
       })
       .catch((err) => {

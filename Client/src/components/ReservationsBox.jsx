@@ -33,26 +33,26 @@ function ReservationsBox({ reservation, role, update }) {
 
   const ManageReservation = (action) => {
     if (action === "cancelar") {
-      console.log("Cancelando");
+      //console.log("Cancelando");
       axios
-        .post(`${import.meta.env.VITE_API_URL}/reservationManage`, { id: reservation.id, status: "cancelled" })
+        .post(`${import.meta.env.VITE_API_URL}/api/reservationManage`, { id: reservation.id, status: "cancelled" })
         .then((res) => {
-          console.log(res);
+          //console.log(res);
           update();
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         });
     } else {
-      console.log("Confirmando");
+      //console.log("Confirmando");
       axios
-        .post(`${import.meta.env.VITE_API_URL}/reservationManage`, { id: reservation.id, status: "confirmed" })
+        .post(`${import.meta.env.VITE_API_URL}/api/reservationManage`, { id: reservation.id, status: "confirmed" })
         .then((res) => {
-          console.log(res);
+          //console.log(res);
           update();
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         });
     }
   };
@@ -60,7 +60,7 @@ function ReservationsBox({ reservation, role, update }) {
   const capitalizedDate = capitalizeFirstLetter(formattedDate);
 
   useEffect(() => {
-    console.log(role);
+    //console.log(role);
   }, [reservation]);
   return (
     <div

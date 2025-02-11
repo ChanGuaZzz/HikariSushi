@@ -25,33 +25,33 @@ function Login() {
 
   const login = async (email, password) => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password }, { withCredentials: true })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         navigate("/hikari");
       })
       .catch((err) => {
-        console.log(err.response.data.message);
+        //console.log(err.response.data.message);
         setError(err.response.data.message || "Error al crear usuario");
       });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email);
-    console.log(password);
-    console.log(confirmPassword);
+    //console.log(email);
+    //console.log(password);
+    //console.log(confirmPassword);
     if (isInLogin) {
       login(email, password);
     } else {
       axios
-        .post(`${import.meta.env.VITE_API_URL}/register`, { email, password, name, phone })
+        .post(`${import.meta.env.VITE_API_URL}/api/register`, { email, password, name, phone })
         .then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           login(email, password);
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          //console.log(err.response.data.message);
           setError(err.response.data.message || "Error al crear usuario");
         });
     }
@@ -59,17 +59,17 @@ function Login() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
-        console.log(res.data.user);
+        //console.log(res.data.user);
         if (res.data.user) {
           navigate("/hikari");
         } else {
-          console.log("Usuario logueado");
+          //console.log("Usuario logueado");
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 

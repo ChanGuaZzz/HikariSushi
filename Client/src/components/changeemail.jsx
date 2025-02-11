@@ -11,12 +11,12 @@ function ChangeEmail({setLoading}) {
 
   const changeEmail = (e) => {
     e.preventDefault();
-    console.log(newEmail, confirmEmail);
+    //console.log(newEmail, confirmEmail);
     setLoading(true);
     axios
-      .post(`${import.meta.env.VITE_API_URL}/changeData`, { isemail: true, newEmail }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/changeData`, { isemail: true, newEmail }, { withCredentials: true })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setSuccess(true);
         setLoading(false);
       })

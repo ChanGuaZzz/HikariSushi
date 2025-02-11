@@ -37,20 +37,17 @@ function Hikari() {
     return date.toISOString().split("T")[0];
   };
 
-  useEffect(() => {
-    console.log(import.meta.env.VITE_API_URL, "LINKKKK?????");
-  }, []);
 
   useEffect(() => {
     if (selectedDate) {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/gethours?date=${selectedDate}`)
+        .get(`${import.meta.env.VITE_API_URL}/api/gethours?date=${selectedDate}`)
         .then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           setAvailableHours(res.data);
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         });
 
       //Se pueden 4 reservas por hora, si hay 4 reservas en una hora, se hace una consulta a la base de datos buscando las reservas en esa fecha y hora y si hay 4, se deshabilita esa hora
@@ -60,11 +57,11 @@ function Hikari() {
 
   const getReservations = async (status) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/getreservations`, { status: status }, { withCredentials: true });
-      console.log(res.data);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/getreservations`, { status: status }, { withCredentials: true });
+      //console.log(res.data);
       return res.data;
     } catch (err) {
-      console.log(err);
+      //console.log(err);
       return [];
     }
   };
@@ -78,21 +75,21 @@ function Hikari() {
       hour: selectedHour,
       people: selectedPeople,
     };
-    console.log(reservation);
+    //console.log(reservation);
     axios
-      .post(`${import.meta.env.VITE_API_URL}/reserve`, { reservation }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/api/reserve`, { reservation }, { withCredentials: true })
       .then((res) => {
-        console.log(res.data.message);
+        //console.log(res.data.message);
         putReservations(role);
         setLoading(false);
         setMessage(res.data.message);
         setIsReserved(true);
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
         setLoading(false);
         setMessage(err.response.data.message);
-        console.log(err.response.data.message);
+        //console.log(err.response.data.message);
         setIsReserved(false);
       });
 
@@ -135,9 +132,9 @@ function Hikari() {
   };
 
   const putReservations = async (role) => {
-    console.log(role, "entroooo");
+    //console.log(role, "entroooo");
     if (role == "client") {
-      console.log("entro a client");
+      //console.log("entro a client");
       getReservations().then((res) => {
         setReservations(res);
       });
@@ -157,32 +154,32 @@ function Hikari() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
       .then((res) => {
-        console.log(res.data.user);
+        //console.log(res.data.user);
         if (!res.data.user) {
           navigate("/login");
         } else {
           putReservations(res.data.user.role);
           setRole(res.data.user.role);
           setLoading(false);
-          console.log("Usuario logueado");
+          //console.log("Usuario logueado");
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 
   const handleLogout = () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/logout`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/logout`, { withCredentials: true })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         navigate("/login");
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   };
 
