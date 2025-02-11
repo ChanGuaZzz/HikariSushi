@@ -176,7 +176,7 @@ function Hikari() {
       .get(`${import.meta.env.VITE_API_URL}/api/logout`, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
-        // navigate("/login");
+        navigate("/login");
       })
       .catch((err) => {
         //console.log(err);
