@@ -154,7 +154,7 @@ function Hikari() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/getSession`, { withCredentials: true })
       .then((res) => {
         console.log(res);
         if (!res.data.user) {
