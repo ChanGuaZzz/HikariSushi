@@ -1,28 +1,39 @@
 import axios from "axios";
 import { LockKeyhole, LockKeyholeOpen, BadgeCheck } from "lucide-react";
 import { useState, useEffect } from "react";
-function ChangePassword({}) {
+function ChangePassword({setLoading}) {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const changePassword = (e) => {
     e.preventDefault();
+    setLoading(true);
+
     console.log(password, newPassword, confirmPassword);
 
     axios
       .post("http://localhost:3000/changeData", { password, newPassword }, { withCredentials: true })
       .then((res) => {
+        setLoading(false);
         console.log(res.data);
         setSuccess(true);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.error(err);
         setConfirmPassword("");
         setPassword("");
         setNewPassword("");
+        setErrorMessage(err.response.data.message);
+
+            setTimeout(() => {
+                setErrorMessage("");
+                }, 3000);
       });
   };
 
@@ -35,6 +46,7 @@ function ChangePassword({}) {
   }, [newPassword, confirmPassword]);
 
   return (
+
     <div className="flex flex-col size-full items-center justify-center ">
       {success ? (
         <>

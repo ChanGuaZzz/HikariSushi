@@ -40,27 +40,25 @@ const registerUser = async (req, res) => {
     if (user) {
       console.log("User created successfully");
 
-
       const html = ` <h1 style="color: orange">¡Bienvenido a Hikari!</h1>
       <p>Gracias por registrarte en Hikari, tu restaurante de sushi favorito.</p>
       <p>Esperamos verte pronto en nuestro restaurante.</p>
       <p>Saludos cordiales,</p>
       <b>El equipo de Hikari</b>`;
 
-
       await transporter
-      .sendMail({
-        from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
-        to: reservation.customerEmail, // list of receivers
-        subject: "Bienvenido a Hikari", // Subject line
-        html: html, // html body
-      })
-      .then((info) => {
-        console.log("Message sent: %s", info.messageId);
-      })
-      .catch((error) => {
-        console.error("Error al enviar el correo:", error);
-      });
+        .sendMail({
+          from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
+          to: reservation.customerEmail, // list of receivers
+          subject: "Bienvenido a Hikari", // Subject line
+          html: html, // html body
+        })
+        .then((info) => {
+          console.log("Message sent: %s", info.messageId);
+        })
+        .catch((error) => {
+          console.error("Error al enviar el correo:", error);
+        });
 
       return res.status(201).json({
         id: user.id,
@@ -68,7 +66,6 @@ const registerUser = async (req, res) => {
         email: user.email,
         message: "User created successfully",
       });
-
     } else {
       console.log("Invalid user data");
 
@@ -146,15 +143,17 @@ const changeData = async (req, res) => {
       if (!email || !newEmail) {
         return res.status(400).json({ message: "Missing data in email" });
       }
-
+      const user = await User.findOne({ where: { email } });
       const userExists = await User.findOne({ where: { email: newEmail } });
 
       if (userExists) {
         return res.status(400).json({ message: "Email already in use" });
       }
 
-      user.email = isemail;
+      user.email = newEmail;
       await user.save();
+
+      req.session.user.email = newEmail;
 
       return res.status(200).json({ message: "Email updated successfully" });
     }
@@ -180,8 +179,13 @@ const changeData = async (req, res) => {
 
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    console.error("Error al cambiar la contraseña:", error);
-    return res.status(500).json({ message: "Error interno del servidor" });
+    if (error.name === "SequelizeValidationError") {
+      console.log(error);
+      return res.status(400).json({ message: "Verifica el correo" });
+    } else {
+      console.error("Error al cambiar la contraseña:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
+    }
   }
 };
 export { registerUser, loginUser, logoutUser, changeData };

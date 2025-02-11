@@ -8,6 +8,7 @@ import Loading from "../components/loading";
 import ModalMessage from "../components/modalMessage";
 import GeneralModal from "../components/generalmodal";
 import ChangePassword from "../components/changepassword";
+import ChangeEmail from "../components/changeemail";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
 //   withCredentials: true,
@@ -25,6 +26,7 @@ function Hikari() {
   const [confirmedReservations, setConfirmedReservations] = useState([{}]);
   const [cancelledReservations, setCancelledReservations] = useState([{}]);
   const [changepass, setchangepass] = useState(false);
+  const [changeemail, setchangeemail] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
   const [message, setMessage] = useState("");
@@ -131,7 +133,7 @@ function Hikari() {
   const putReservations = async (role) => {
     console.log(role, "entroooo");
     if (role == "client") {
-console.log("entro a client");
+      console.log("entro a client");
       getReservations().then((res) => {
         setReservations(res);
       });
@@ -193,8 +195,22 @@ console.log("entro a client");
         />
       )}
       {changepass && (
-        <GeneralModal onClose={()=>{setchangepass(false)}}>
-          <ChangePassword />
+        <GeneralModal
+          onClose={() => {
+            setchangepass(false);
+          }}
+        >
+          <ChangePassword setLoading={setLoading}  />
+        </GeneralModal>
+      )}
+
+      {changeemail && (
+        <GeneralModal
+          onClose={() => {
+            setchangeemail(false);
+          }}
+        >
+          <ChangeEmail setLoading={setLoading} />
         </GeneralModal>
       )}
       <div className=" flex absolute w-full justify-center items-center top-6 ">
@@ -313,7 +329,14 @@ console.log("entro a client");
               <h1 className=" w-full px-2 text-left text-xl">Mis Reservas</h1>
 
               {Reservations.map((reservation, index) => (
-                <ReservationsBox key={index}  update={()=>{putReservations("client")}} role={role} reservation={reservation} />
+                <ReservationsBox
+                  key={index}
+                  update={() => {
+                    putReservations("client");
+                  }}
+                  role={role}
+                  reservation={reservation}
+                />
               ))}
             </>
           ) : (
@@ -328,13 +351,29 @@ console.log("entro a client");
 
               <h1 className=" w-full px-2 text-left text-xl">Canceladas</h1>
               {cancelledReservations.map((reservation, index) => (
-                <ReservationsBox key={index}  update={putReservations} role={role} reservation={reservation} />
+                <ReservationsBox key={index} update={putReservations} role={role} reservation={reservation} />
               ))}
             </>
           )}
         </div>
-        
-        <button className="py-3 bg-[#dd300c] rounded-lg px-[50px]" onClick={()=>{setchangepass(true)}}>Cambiar contraseña</button>
+        <div className="flex flex-wrap  justify-center items-center">
+          <button
+            className="py-3 m-1 bg-[#dd300c] w-[300px] rounded-lg px-[50px]"
+            onClick={() => {
+              setchangeemail(true);
+            }}
+          >
+            Cambiar Correo
+          </button>
+          <button
+            className="py-3 m-1 bg-[#dd300c] w-[300px] rounded-lg px-[50px]"
+            onClick={() => {
+              setchangepass(true);
+            }}
+          >
+            Cambiar contraseña
+          </button>
+        </div>
       </div>
     </div>
   );
