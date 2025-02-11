@@ -173,10 +173,10 @@ function Hikari() {
 
   const handleLogout = () => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/logout`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/logout`, { withCredentials: true })
       .then((res) => {
-        //console.log(res.data);
-        navigate("/login");
+        console.log(res.data);
+        // navigate("/login");
       })
       .catch((err) => {
         //console.log(err);
