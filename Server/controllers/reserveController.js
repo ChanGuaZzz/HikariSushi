@@ -1,5 +1,6 @@
 import { Op, Sequelize } from "sequelize";
 import Reservation from "../models/Reservation.js";
+import transporter from "../config/mailer.js";
 
 const reserveTable = async (req, res) => {
   try {
@@ -100,13 +101,13 @@ const getReservations = async (req, res) => {
     }
     const reservations = await Reservation.findAll({
       attributes: [
-        'date',
-        'hour',
-        'people',
-        'customerName',
-        'customerEmail',
-        'customerPhone',
-        'tableNumber',
+        "date",
+        "hour",
+        "people",
+        "customerName",
+        "customerEmail",
+        "customerPhone",
+        "tableNumber",
         "date",
         [
           Sequelize.literal(`
@@ -208,6 +209,68 @@ const reservationManage = async (req, res) => {
 
     reservation.status = status;
     await reservation.save();
+
+    const html =
+      status === "confirmed"
+        ? `
+      <h1>Estado de la reserva: <span style="color: green">Confirmada</span>  </h1>
+      <h2>Estimado/a ${reservation.customerName}🥋,</h2>
+      <p>Le informamos que su reserva para el dia <b>${reservation.date}</b> a las </b>${reservation.hour}<b>
+       ha sido confirmada.</p>
+
+      <p>Por favor presentarse 10 minutos antes de la hora de la reserva.</p>
+
+      <p>Si no puede presentarse favor cancelar la reserva.</p>
+
+      <i>Te esperamos... 😉</i>
+
+      <p>Si desea realizar una nueva reserva acceda al siguiente enlace <a href="https://hikarisushi.onrender.com">Hikari</a></p>
+
+      <p>Para mas informacion contactenos al 1234567890 📞</p>
+
+      <p>Gracias por preferirnos 🤗</p>
+
+      <p>Atentamente, Hikari Restaurant 🍣</p>
+
+      <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
+
+
+      `
+        : `
+      <h1>Estado de la reserva: <span style="color: red">Cancelada</span> </h1>
+      <h2>Estimado/a ${reservation.customerName}🥋,</h2>
+      <p>Le informamos que su reserva para el dia <b>${reservation.date}</b> a las </b>${reservation.hour}<b>
+       ha sido cancelada.</p>
+
+      <p> Lamentamos los inconvenientes ocasionados😥</p>
+
+      <b> Sera otro dia... 😊</b>
+
+      <p>Si desea realizar una nueva reserva acceda al siguiente enlace <a href="https://hikarisushi.onrender.com">Hikari</a></p>
+
+      <p>Para mas informacion contactenos al 1234567890 📞</p>
+
+      <p>Gracias por preferirnos 🤗</p>
+
+      <p>Atentamente, Hikari Restaurant 🍣</p>
+
+      <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
+
+      `;
+
+    await transporter
+      .sendMail({
+        from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
+        to: reservation.customerEmail, // list of receivers
+        subject: "Reserva", // Subject line
+        html: html, // html body
+      })
+      .then((info) => {
+        console.log("Message sent: %s", info.messageId);
+      })
+      .catch((error) => {
+        console.error("Error al enviar el correo:", error);
+      });
 
     return res.status(200).json({ message: "Reservation updated successfully" });
   } catch (error) {

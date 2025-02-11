@@ -4,6 +4,7 @@ import { server } from "./app.js";
 import User from "./models/User.js";
 import bcrypt from "bcrypt";
 // import "./routes/socketRoutes.js"
+// import "./config/mailer.js"
 dotenv.config();
 sequelize.sync({ alter: true }).then(() => {
   //CREA UN USUARIO ADMINISTRADOR
