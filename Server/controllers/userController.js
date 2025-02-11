@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import { Op } from "sequelize";
+import transporter from "../config/mailer.js";
 
 const registerUser = async (req, res) => {
   const { name, email, phone, password } = req.body;
@@ -38,12 +39,36 @@ const registerUser = async (req, res) => {
 
     if (user) {
       console.log("User created successfully");
+
+
+      const html = ` <h1 style="color: orange">¡Bienvenido a Hikari!</h1>
+      <p>Gracias por registrarte en Hikari, tu restaurante de sushi favorito.</p>
+      <p>Esperamos verte pronto en nuestro restaurante.</p>
+      <p>Saludos cordiales,</p>
+      <b>El equipo de Hikari</b>`;
+
+
+      await transporter
+      .sendMail({
+        from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
+        to: reservation.customerEmail, // list of receivers
+        subject: "Bienvenido a Hikari", // Subject line
+        html: html, // html body
+      })
+      .then((info) => {
+        console.log("Message sent: %s", info.messageId);
+      })
+      .catch((error) => {
+        console.error("Error al enviar el correo:", error);
+      });
+
       return res.status(201).json({
         id: user.id,
         name: user.name,
         email: user.email,
         message: "User created successfully",
       });
+
     } else {
       console.log("Invalid user data");
 
