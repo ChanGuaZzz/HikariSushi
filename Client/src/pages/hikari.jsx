@@ -228,8 +228,16 @@ function Hikari() {
           {role == "client" ? (
             <div>
               <h1 className=" w-full px-2 text-left text-xl mb-5">Nueva Reserva</h1>
+
+
+
+
+
+
+
+
               <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
                     <div className="relative">
@@ -313,6 +321,15 @@ function Hikari() {
                   Confirmar Reserva
                 </button>
               </form>
+
+
+
+
+
+
+
+
+
             </div>
           ) : (
             <div>
