@@ -83,12 +83,14 @@ function Hikari() {
         setLoading(false);
         setMessage(res.data.message);
         setIsReserved(true);
+        setModal(true);
       })
       .catch((err) => {
         //console.log(err);
         setLoading(false);
         setMessage(err.response.data.message);
         //console.log(err.response.data.message);
+        setModal(true);
         setIsReserved(false);
       });
 
@@ -227,13 +229,6 @@ function Hikari() {
             <div>
               <h1 className=" w-full px-2 text-left text-xl mb-5">Nueva Reserva</h1>
 
-
-
-
-
-
-
-
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="flex flex-wrap justify-between space-y-6 sm:space-y-0">
                   <div className="w-full sm:max-w-[48%]">
@@ -319,15 +314,6 @@ function Hikari() {
                   Confirmar Reserva
                 </button>
               </form>
-
-
-
-
-
-
-
-
-
             </div>
           ) : (
             <div>
