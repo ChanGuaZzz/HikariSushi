@@ -240,8 +240,8 @@ function Hikari() {
                 <div className="flex flex-wrap justify-between space-y-6 sm:space-y-0">
                   <div className="w-full sm:max-w-[48%]">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-                    <div className="relative w-full ">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="relative flex w-full ">
+                      <div className="   mx-2 flex items-center pointer-events-none">
                         <Calendar className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
@@ -261,8 +261,8 @@ function Hikari() {
 
                   <div className="w-full sm:max-w-[48%]">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-                    <div className="relative w-full ">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="relative flex w-full ">
+                      <div className="   mx-2 flex items-center pointer-events-none">
                         <Clock className="h-5 w-5 text-gray-400" />
                       </div>
                       {AvailableHours.length > 0 ? (
@@ -292,10 +292,10 @@ function Hikari() {
                     </div>
                   </div>
 
-                  <div className="w-full mt-8">
+                  <div className="w-full sm:pt-9">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Número de Personas</label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div className="relative flex w-full ">
+                      <div className="   mx-2 flex items-center pointer-events-none">
                         <Users className="h-5 w-5 text-gray-400" />
                       </div>
                       <select
