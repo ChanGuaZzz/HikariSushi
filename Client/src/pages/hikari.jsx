@@ -237,10 +237,10 @@ function Hikari() {
 
 
               <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="flex flex-col space-y-6">
-                  <div>
+                <div className="flex flex-wrap justify-between space-y-6 sm:space-y-0">
+                  <div className="w-full sm:max-w-[48%]">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-                    <div className="relative">
+                    <div className="relative w-full ">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Calendar className="h-5 w-5 text-gray-400" />
                       </div>
@@ -251,7 +251,7 @@ function Hikari() {
                         min={today}
                         placeholder="dd/mm/aaaa"
                         max={maxDate}
-                        className="pl-[40px] w-full pr-2 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
                         onKeyDown={(e) => e.preventDefault()}
                       />
@@ -259,15 +259,15 @@ function Hikari() {
                     {isWeekend(selectedDate) && <p className="mt-2 text-sm text-red-600">No se permiten reservas los fines de semana</p>}
                   </div>
 
-                  <div>
+                  <div className="w-full sm:max-w-[48%]">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-                    <div className="relative">
+                    <div className="relative w-full ">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Clock className="h-5 w-5 text-gray-400" />
                       </div>
                       {AvailableHours.length > 0 ? (
                         <select
-                          className="pl-[40px] w-full  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          className="text-center w-full h-10  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                           required
                           onChange={() => setSelectedHour(event.target.value)}
                         >
@@ -282,7 +282,7 @@ function Hikari() {
                         </select>
                       ) : (
                         <select
-                          className="pl-[40px] w-full  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          className="text-center  w-full h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                           required
                           disabled
                         >
@@ -292,18 +292,18 @@ function Hikari() {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="w-full mt-8">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Número de Personas</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Users className="h-5 w-5 text-gray-400" />
                       </div>
                       <select
-                        className="pl-[40px] w-full  overflow-hidden py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="text-center w-full overflow-hidden py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
                         onChange={() => setSelectedPeople(event.target.value)}
                       >
-                        <option value="">Selecciona número de personas</option>
+                        <option value="">Número de personas</option>
                         {Array.from({ length: 20 }, (_, i) => (
                           <option key={i + 1} value={i + 1}>
                             {i + 1} persona{i + 1 > 1 ? "s" : ""}
