@@ -92,8 +92,6 @@ function Hikari() {
         setIsReserved(false);
       });
 
-    setModal(true);
-
     //comprueba si tengo una reserva en la misma fecha, solo se puede tener una reserva por fecha,
   };
 
