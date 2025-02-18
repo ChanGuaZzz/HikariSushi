@@ -243,7 +243,7 @@ function Hikari() {
                         min={today}
                         placeholder="dd/mm/aaaa"
                         max={maxDate}
-                        className="pl-[40px] w-full min-w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="pl-[40px] w-full pr-2 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
                         onKeyDown={(e) => e.preventDefault()}
                       />
@@ -259,7 +259,7 @@ function Hikari() {
                       </div>
                       {AvailableHours.length > 0 ? (
                         <select
-                          className="pl-[40px] w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          className="pl-[40px] w-full  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                           required
                           onChange={() => setSelectedHour(event.target.value)}
                         >
@@ -274,7 +274,7 @@ function Hikari() {
                         </select>
                       ) : (
                         <select
-                          className="pl-[40px] w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          className="pl-[40px] w-full  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                           required
                           disabled
                         >
@@ -291,7 +291,7 @@ function Hikari() {
                         <Users className="h-5 w-5 text-gray-400" />
                       </div>
                       <select
-                        className="pl-10 w-full px-4 overflow-hidden py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="pl-[40px] w-full  overflow-hidden py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
                         onChange={() => setSelectedPeople(event.target.value)}
                       >
