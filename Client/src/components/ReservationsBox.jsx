@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from "react";
-import { Utensils, UsersRound } from "lucide-react";
+import { Utensils, UsersRound, PhoneCall, SquareUser, Mail } from "lucide-react";
 import { use } from "react";
 import axios from "axios";
 
-function ReservationsBox({ reservation, role, update }) {
+function ReservationsBox({ reservation, role, update, setLoading }) {
   const [manage, setManage] = useState(false);
   const formattedDate = new Date(reservation.date).toLocaleDateString("es-ES", {
     weekday: "long",
     day: "numeric",
     month: "long",
+    year: "numeric",
+  });
+
+  const formattedDateAdmin = new Date(reservation.date).toLocaleDateString("es-ES", {
+    day: "numeric",
+    month: "numeric",
     year: "numeric",
   });
 
@@ -32,6 +38,7 @@ function ReservationsBox({ reservation, role, update }) {
   };
 
   const ManageReservation = (action) => {
+    setLoading(true);
     if (action === "cancelar") {
       //console.log("Cancelando");
       axios
@@ -39,9 +46,12 @@ function ReservationsBox({ reservation, role, update }) {
         .then((res) => {
           //console.log(res);
           update();
+          
         })
         .catch((err) => {
           //console.log(err);
+        }).finally(()=>{
+          setLoading(false);
         });
     } else {
       //console.log("Confirmando");
@@ -53,6 +63,8 @@ function ReservationsBox({ reservation, role, update }) {
         })
         .catch((err) => {
           //console.log(err);
+        }).finally(()=>{
+          setLoading(false);
         });
     }
   };
@@ -60,7 +72,7 @@ function ReservationsBox({ reservation, role, update }) {
   const capitalizedDate = capitalizeFirstLetter(formattedDate);
 
   useEffect(() => {
-    //console.log(role);
+    console.log(reservation);
   }, [reservation]);
   return (
     <div
@@ -115,15 +127,34 @@ function ReservationsBox({ reservation, role, update }) {
       </div>
       <div className="flex flex-col ml-5 w-[70%] space-y-1">
         <div className=" sm:text-lg">{capitalizedDate}</div>
-        <div className="text-sm flex flex-wrap items-center space-x-3 space-y-1  ">
+        <div className="text-sm flex flex-wrap items-center space-y-1  ">
           <div className=" flex items-center opacity-55">
             <UsersRound className=" mx-2 h-4 w-4 text-gray-400 flex items-center" />
             <h2>{reservation.people} Persona/s </h2>
           </div>
-          <div>
-            <div className={`${reservation.status == "confirmed" ? "text-[#28d428]" : reservation.status == "canceled" ? "text-[#fa3232]" : "text-gray-500"}`}>
-              Estado: {reservation.status}
-            </div>
+          <div className="w-[80%] overflow-hidden">
+            {role !== "client" ? (
+              <>
+                <div className="flex items-center">
+                  <SquareUser className=" mx-2 h-3 w-3 text-gray-400 flex items-center" />
+                  <h2 className="text-xs overflow-hidden h-4 w-full"> {reservation.customerName}</h2>
+                </div>
+                <div className="flex items-center">
+                  <PhoneCall className=" mx-2 h-3 w-3 text-gray-400 flex items-center" />
+                  <h2 className="text-xs overflow-hidden h-4 w-full text-blue-500"> {reservation.customerPhone}</h2>
+                </div>
+                <div className="flex items-center">
+                  <Mail className=" mx-2 h-3 w-3 text-gray-400 flex items-center" />
+                  <h2 className="text-xs overflow-x-auto scroll h-4 w-full text-blue-500"> {reservation.customerEmail}</h2>
+                </div>
+              </>
+            ) : (
+              <div
+                className={`${reservation.status == "confirmed" ? "text-[#28d428]" : reservation.status == "canceled" ? "text-[#fa3232]" : "text-gray-500"}`}
+              >
+                Estado: {reservation.status}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -37,7 +37,6 @@ function Hikari() {
     return date.toISOString().split("T")[0];
   };
 
-
   useEffect(() => {
     if (selectedDate) {
       axios
@@ -317,9 +316,10 @@ function Hikari() {
           ) : (
             <div>
               <h1 className=" w-full px-2 text-left text-xl mb-5"> Pendientes</h1>
+              {pendingReservations.length === 0 && <h1 className="text-center">No hay reservas pendientes</h1>}
 
               {pendingReservations.map((reservation, index) => (
-                <ReservationsBox key={index} update={putReservations} role={role} reservation={reservation} />
+                <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
               ))}
             </div>
           )}
@@ -328,9 +328,10 @@ function Hikari() {
           {role == "client" ? (
             <>
               <h1 className=" w-full px-2 text-left text-xl">Mis Reservas</h1>
-
+              {Reservations.length === 0 && <h1 className="text-center">No hay reservas</h1>}
               {Reservations.map((reservation, index) => (
                 <ReservationsBox
+                  setLoading={setLoading}
                   key={index}
                   update={() => {
                     putReservations("client");
@@ -343,16 +344,17 @@ function Hikari() {
           ) : (
             <>
               <h1 className=" w-full px-2 text-left text-xl">Confirmadas</h1>
-
+              {confirmedReservations.length === 0 && <h1 className="text-center">No hay reservas confirmadas</h1>}
               {confirmedReservations.map((reservation, index) => (
-                <ReservationsBox key={index} update={putReservations} role={role} reservation={reservation} />
+                <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
               ))}
 
               <div className="w-full my-5 border border-[#3f3f3f62]"></div>
 
               <h1 className=" w-full px-2 text-left text-xl">Canceladas</h1>
+              {cancelledReservations.length === 0 && <h1 className="text-center">No hay reservas canceladas</h1>}
               {cancelledReservations.map((reservation, index) => (
-                <ReservationsBox key={index} update={putReservations} role={role} reservation={reservation} />
+                <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
               ))}
             </>
           )}
