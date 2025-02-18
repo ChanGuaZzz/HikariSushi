@@ -28,7 +28,7 @@ function Login() {
 
   const login = async (email, password) => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/login`, { email, password }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { withCredentials: true })
       .then((res) => {
         // console.log(res.data);
         setLoading(false);
@@ -52,7 +52,7 @@ function Login() {
       login(email, password);
     } else {
       axios
-        .post(`${import.meta.env.VITE_API_URL}/api/register`, { email, password, name, phone })
+        .post(`${import.meta.env.VITE_API_URL}/register`, { email, password, name, phone })
         .then((res) => {
           //console.log(res.data);
           login(email, password);
@@ -66,7 +66,7 @@ function Login() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/getsession`, { withCredentials: true })
       .then((res) => {
         //console.log(res.data.user);
         if (res.data.user) {

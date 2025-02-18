@@ -41,7 +41,7 @@ function Hikari() {
   useEffect(() => {
     if (selectedDate) {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/api/gethours?date=${selectedDate}`)
+        .get(`${import.meta.env.VITE_API_URL}/gethours?date=${selectedDate}`)
         .then((res) => {
           //console.log(res.data);
           setAvailableHours(res.data);
@@ -57,7 +57,7 @@ function Hikari() {
 
   const getReservations = async (status) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/getreservations`, { status: status }, { withCredentials: true });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/getreservations`, { status: status }, { withCredentials: true });
       //console.log(res.data);
       return res.data;
     } catch (err) {
@@ -77,7 +77,7 @@ function Hikari() {
     };
     //console.log(reservation);
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/reserve`, { reservation }, { withCredentials: true })
+      .post(`${import.meta.env.VITE_API_URL}/reserve`, { reservation }, { withCredentials: true })
       .then((res) => {
         //console.log(res.data.message);
         putReservations(role);
@@ -154,7 +154,7 @@ function Hikari() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/getsession`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/getsession`, { withCredentials: true })
       .then((res) => {
         console.log(res);
         if (!res.data.user) {
@@ -173,7 +173,7 @@ function Hikari() {
 
   const handleLogout = () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/logout`, { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/logout`, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         navigate("/login");

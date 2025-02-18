@@ -35,7 +35,7 @@ function ReservationsBox({ reservation, role, update }) {
     if (action === "cancelar") {
       //console.log("Cancelando");
       axios
-        .post(`${import.meta.env.VITE_API_URL}/api/reservationManage`, { id: reservation.id, status: "cancelled" })
+        .post(`${import.meta.env.VITE_API_URL}/reservationManage`, { id: reservation.id, status: "cancelled" })
         .then((res) => {
           //console.log(res);
           update();
@@ -46,7 +46,7 @@ function ReservationsBox({ reservation, role, update }) {
     } else {
       //console.log("Confirmando");
       axios
-        .post(`${import.meta.env.VITE_API_URL}/api/reservationManage`, { id: reservation.id, status: "confirmed" })
+        .post(`${import.meta.env.VITE_API_URL}/reservationManage`, { id: reservation.id, status: "confirmed" })
         .then((res) => {
           //console.log(res);
           update();
