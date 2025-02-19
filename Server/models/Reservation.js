@@ -56,6 +56,10 @@ Reservation.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    busyTables : {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     date: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -76,8 +80,8 @@ Reservation.init(
       allowNull: true,
     },
     status: {
-      type: DataTypes.ENUM('pending', 'confirmed', 'cancelled'),
-      defaultValue: 'pending',
+      type: DataTypes.ENUM('confirmed', 'cancelled'),
+      defaultValue: 'confirmed',
     },
   },
   {

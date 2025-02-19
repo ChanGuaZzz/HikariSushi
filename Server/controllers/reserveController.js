@@ -1,8 +1,69 @@
 import { Op, Sequelize } from "sequelize";
 import Reservation from "../models/Reservation.js";
 import transporter from "../config/mailer.js";
+import { allHours, numberOfTables, peopleForTable } from "../app.js";
+import DateReservation from "../models/DateReservation.js";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+
+  const html= (status, customerName, date, hour) => {
+    const formattedDate = format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
+    if(status === "confirmed"){
+      return `
+      <h1>Estado de la reserva: <span style="color: green">Confirmada</span>  </h1>
+      <h2>Estimado/a ${customerName}🥋,</h2>
+      <p>Le informamos que su reserva para el dia <b>${formattedDate}</b> a las </b>${hour}<b>
+       ha sido confirmada.</p>
+
+      <p>Por favor presentarse 10 minutos antes de la hora de la reserva.</p>
+
+      <p>Si no puede presentarse favor cancelar la reserva.</p>
+
+      <i>Te esperamos... 😉</i>
+
+      <p>Si desea realizar una nueva reserva acceda al siguiente enlace <a href="https://hikarisushi.onrender.com">Hikari</a></p>
+
+      <p>Para mas informacion contactenos al 1234567890 📞</p>
+
+      <p>Gracias por preferirnos 🤗</p>
+
+      <p>Atentamente, Hikari Restaurant 🍣</p>
+
+      <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
+
+
+      `
+
+      }
+      return `
+      <h1>Estado de la reserva: <span style="color: red">Cancelada</span> </h1>
+      <h2>Estimado/a ${customerName}🥋,</h2>
+      <p>Le informamos que su reserva para el dia <b>${formattedDate}</b> a las </b>${hour}<b>
+       ha sido cancelada.</p>
+
+      <p> Lamentamos los inconvenientes ocasionados😥</p>
+
+      <b> Sera otro dia... 😊</b>
+
+      <p>Si desea realizar una nueva reserva acceda al siguiente enlace <a href="https://hikarisushi.onrender.com">Hikari</a></p>
+
+      <p>Para mas informacion contactenos al 1234567890 📞</p>
+
+      <p>Gracias por preferirnos 🤗</p>
+
+      <p>Atentamente, Hikari Restaurant 🍣</p>
+
+      <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
+
+      `
+
+  }
+
 
 const reserveTable = async (req, res) => {
+  let admincreate = false;
+  let BusyTables = 0;
+
   try {
     if (req.session.user === null) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -10,35 +71,20 @@ const reserveTable = async (req, res) => {
       return res.status(401).json({ message: "missing data" });
     }
     console.log(req.session.user);
-    const reserveLimits = 5;
-    const { date, hour, people } = req.body.reservation;
+    const { date, hour, people, name, phone } = req.body.reservation;
 
-    console.log(date, hour, people);
+    console.log(date, hour, people, name, phone);
 
-    const CountOfReservation = await Reservation.count({
-      where: {
-        date: new Date(date),
-        hour: `${hour}:00`,
-        status: {
-          [Op.or]: ["pending", "confirm"],
-        },
-      },
-    });
-
-    console.log(`Mesas ocupadas el dia ${date} a las ${hour} : `, CountOfReservation);
-
-    if (CountOfReservation > reserveLimits) {
-      console.log("No hay mesas disponibles");
-      return res.status(401).json({ message: "No hay mesas disponibles" });
+    if (name && phone) {
+      admincreate = true;
     }
+    console.log(numberOfTables);
 
     const ReserveDateExists = await Reservation.findOne({
       where: {
         date: new Date(date),
-        customerPhone: req.session.user.phone,
-        status: {
-          [Op.or]: ["pending", "confirm"],
-        },
+        customerPhone: phone || req.session.user.phone,
+        status: "confirmed",
       },
     });
 
@@ -47,20 +93,75 @@ const reserveTable = async (req, res) => {
       return res.status(401).json({ message: "Ya tienes una reserva para esa fecha" });
     }
 
+    let dateReservation = await DateReservation.findOne({
+      where: {
+        date: new Date(date),
+        hour,
+      },
+    });
+    console.log(dateReservation, "FECHA DE RESERVA");
+
+    if (!dateReservation) {
+      dateReservation = await DateReservation.create({
+        date: new Date(date),
+        hour,
+        availableTables: numberOfTables,
+      });
+    }
+    BusyTables = Math.ceil(people / peopleForTable);
+    console.log("personas ", people, " y ocupa ", BusyTables, " mesas");
+
+    if (BusyTables > dateReservation.availableTables) {
+      console.log("No hay mesas disponibles");
+      return res.status(401).json({ message: "No hay mesas disponibles" });
+    }
+    dateReservation.availableTables = dateReservation.availableTables - BusyTables;
+    await dateReservation.save();
+    if (admincreate) {
+      const reservation = await Reservation.create({
+        customerName: name,
+        customerEmail: "usuario@creado.admin",
+        customerPhone: phone,
+        busyTables: BusyTables,
+        date,
+        hour,
+        people,
+      });
+      // console.log(reservation);
+      console.log("Reserva creada con exito");
+
+      return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
+    }
+
     const reservation = await Reservation.create({
       customerName: req.session.user.name,
       customerEmail: req.session.user.email,
       customerPhone: req.session.user.phone,
+      busyTables: BusyTables,
       date,
       hour,
       people,
     });
 
+    await transporter
+    .sendMail({
+      from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
+      to: reservation.customerEmail, // list of receivers
+      subject: "Reserva", // Subject line
+      html: html(reservation.status, reservation.customerName, reservation.date, reservation.hour), // html body
+    })
+    .then((info) => {
+      console.log("Message sent: %s", info.messageId);
+    })
+    .catch((error) => {
+      console.error("Error al enviar el correo:", error);
+    });
+
     console.log("Reserva creada con exito");
 
-    return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
 
-    console.log(reservation);
+    // console.log(reservation);
+    return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -160,28 +261,37 @@ const getAvailableHours = async (req, res) => {
   }
 
   try {
-    const reservations = await Reservation.findAll({
-      where: {
-        date: new Date(date),
-        status: {
-          [Op.or]: ["pending", "confirm"],
+
+    const AvailableHours= [];
+
+    for(let i = 0; i < allHours.length; i++){
+      let dateReservation = await DateReservation.findOne({
+        where: {
+          date: new Date(date),
+          hour: allHours[i],
         },
-      },
-    });
+      });
+      if (!dateReservation) {
+        dateReservation = await DateReservation.create({
+          date: new Date(date),
+          hour: allHours[i],
+          availableTables: numberOfTables,
+        });
+      }
+      if(dateReservation.availableTables > 0){
+        AvailableHours.push({hour: allHours[i], available: true});
+      }else{
+        AvailableHours.push({hour: allHours[i], available: true});
 
-    const reservedHoursCount = reservations.reduce((acc, reservation) => {
-      acc[reservation.hour] = (acc[reservation.hour] || 0) + 1;
-      return acc;
-    }, {});
 
-    const allHours = ["9:00", "12:00", "14:00", "16:00", "21:00"];
-    const maxReservationsPerHour = 5;
+      }
+    }
 
-    const availableHours = allHours.filter((hour) => {
-      return (reservedHoursCount[hour] || 0) < maxReservationsPerHour;
-    });
+    console.log(AvailableHours);
 
-    return res.status(200).json(availableHours);
+
+
+    return res.status(200).json(AvailableHours);
   } catch (error) {
     console.error("Error al obtener las horas disponibles:", error);
     return res.status(500).json({ message: "Error interno del servidor" });
@@ -206,64 +316,31 @@ const reservationManage = async (req, res) => {
     if (!reservation) {
       return res.status(404).json({ message: "Reservation not found" });
     }
+    if (reservation.status !== status) {
+      reservation.status = status;
+      if (status === "cancelled") {
+        const dateReservation = await DateReservation.findOne({
+          where: {
+            date: reservation.date,
+            hour: reservation.hour,
+          },
+        });
+        dateReservation.availableTables = dateReservation.availableTables + reservation.busyTables;
+        await dateReservation.save();
+      }
+      console.log("Reserva actualizada con exito");
+    } else {
+      return res.status(400).json({ message: "Reservation already has that status" });
+    }
 
-    reservation.status = status;
     await reservation.save();
-
-    const html =
-      status === "confirmed"
-        ? `
-      <h1>Estado de la reserva: <span style="color: green">Confirmada</span>  </h1>
-      <h2>Estimado/a ${reservation.customerName}🥋,</h2>
-      <p>Le informamos que su reserva para el dia <b>${reservation.date}</b> a las </b>${reservation.hour}<b>
-       ha sido confirmada.</p>
-
-      <p>Por favor presentarse 10 minutos antes de la hora de la reserva.</p>
-
-      <p>Si no puede presentarse favor cancelar la reserva.</p>
-
-      <i>Te esperamos... 😉</i>
-
-      <p>Si desea realizar una nueva reserva acceda al siguiente enlace <a href="https://hikarisushi.onrender.com">Hikari</a></p>
-
-      <p>Para mas informacion contactenos al 1234567890 📞</p>
-
-      <p>Gracias por preferirnos 🤗</p>
-
-      <p>Atentamente, Hikari Restaurant 🍣</p>
-
-      <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
-
-
-      `
-        : `
-      <h1>Estado de la reserva: <span style="color: red">Cancelada</span> </h1>
-      <h2>Estimado/a ${reservation.customerName}🥋,</h2>
-      <p>Le informamos que su reserva para el dia <b>${reservation.date}</b> a las </b>${reservation.hour}<b>
-       ha sido cancelada.</p>
-
-      <p> Lamentamos los inconvenientes ocasionados😥</p>
-
-      <b> Sera otro dia... 😊</b>
-
-      <p>Si desea realizar una nueva reserva acceda al siguiente enlace <a href="https://hikarisushi.onrender.com">Hikari</a></p>
-
-      <p>Para mas informacion contactenos al 1234567890 📞</p>
-
-      <p>Gracias por preferirnos 🤗</p>
-
-      <p>Atentamente, Hikari Restaurant 🍣</p>
-
-      <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
-
-      `;
 
     await transporter
       .sendMail({
         from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
         to: reservation.customerEmail, // list of receivers
         subject: "Reserva", // Subject line
-        html: html, // html body
+        html: html(status, reservation.customerName, reservation.date, reservation.hour), // html body
       })
       .then((info) => {
         console.log("Message sent: %s", info.messageId);

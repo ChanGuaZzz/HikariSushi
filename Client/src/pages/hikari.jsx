@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DoorOpen, Calendar, Clock, Users } from "lucide-react";
+import { DoorOpen, Calendar, Clock, Users, User, PhoneCall } from "lucide-react";
 import { use } from "react";
 import ReservationsBox from "../components/ReservationsBox";
 import Loading from "../components/loading";
@@ -32,6 +32,8 @@ function Hikari() {
   const [message, setMessage] = useState("");
   const [isreserved, setIsReserved] = useState(false);
   const [role, setRole] = useState("");
+  const [nameReservation, setNameReservation] = useState("");
+  const [phoneReservation, setPhoneReservation] = useState("");
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
@@ -69,12 +71,17 @@ function Hikari() {
   const handleSubmit = (e) => {
     setLoading(true);
     e.preventDefault();
+
     const reservation = {
       date: selectedDate,
       hour: selectedHour,
       people: selectedPeople,
     };
-    //console.log(reservation);
+    if (role == "admin") {
+      reservation.name = nameReservation;
+      reservation.phone = phoneReservation;
+    }
+    console.log(reservation);
     axios
       .post(`${import.meta.env.VITE_API_URL}/reserve`, { reservation }, { withCredentials: true })
       .then((res) => {
@@ -225,106 +232,134 @@ function Hikari() {
       </button>
       <div className="w-[80%] space-y-10 m-[100px] flex flex-col items-center justify-center">
         <div className="bg-[white] shadow-xl p-10 w-full max-w-[1000px] rounded-lg text-black">
-          {role == "client" ? (
-            <div>
-              <h1 className=" w-full px-2 text-left text-xl mb-5">Nueva Reserva</h1>
+          <div>
+            <h1 className=" w-full px-2 text-left text-xl mb-5">Nueva Reserva</h1>
 
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="flex flex-wrap justify-between space-y-6 sm:space-y-0">
-                  <div className="w-full sm:max-w-[48%]">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-                    <div className="relative flex w-full ">
-                      <div className="   mx-2 flex items-center pointer-events-none">
-                        <Calendar className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={handleDateChange}
-                        min={today}
-                        placeholder="dd/mm/aaaa"
-                        max={maxDate}
-                        className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                        required
-                        onKeyDown={(e) => e.preventDefault()}
-                      />
-                    </div>
-                    {isWeekend(selectedDate) && <p className="mt-2 text-sm text-red-600">No se permiten reservas los fines de semana</p>}
-                  </div>
-
-                  <div className="w-full sm:max-w-[48%]">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Hora</label>
-                    <div className="relative flex w-full ">
-                      <div className="   mx-2 flex items-center pointer-events-none">
-                        <Clock className="h-5 w-5 text-gray-400" />
-                      </div>
-                      {AvailableHours.length > 0 ? (
-                        <select
-                          className="text-center w-full h-10  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="flex flex-wrap justify-between space-y-6 sm:space-y-0">
+                {role == "admin" && (
+                  <>
+                    <div className="w-full sm:max-w-[48%]">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                      <div className="relative flex w-full ">
+                        <div className=" mx-2 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="text"
+                          value={nameReservation}
+                          onChange={(e) => setNameReservation(e.target.value)}
+                          placeholder="Jose Perez"
+                          maxLength={30}
+                          className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                           required
-                          onChange={() => setSelectedHour(event.target.value)}
-                        >
-                          <option value="">Selecciona una hora</option>
-                          {AvailableHours.map((hour, index) => {
-                            return (
-                              <option key={index} value={hour}>
-                                {hour}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      ) : (
-                        <select
-                          className="text-center  w-full h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                          required
-                          disabled
-                        >
-                          <option value="">Selecciona una fecha</option>
-                        </select>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="w-full sm:pt-9">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Número de Personas</label>
-                    <div className="relative flex w-full ">
-                      <div className="   mx-2 flex items-center pointer-events-none">
-                        <Users className="h-5 w-5 text-gray-400" />
+                        />
                       </div>
+                    </div>
+                    <div className="w-full sm:max-w-[48%]">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Telefono</label>
+                      <div className="relative flex w-full ">
+                        <div className="   mx-2 flex items-center pointer-events-none">
+                          <PhoneCall className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                          type="tel"
+                          value={phoneReservation}
+                          onChange={(e) => setPhoneReservation(e.target.value)}
+                          placeholder="603434212"
+                          maxLength={9}
+                          className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div className="w-full sm:max-w-[48%]">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                  <div className="relative flex w-full ">
+                    <div className="   mx-2 flex items-center pointer-events-none">
+                      <Calendar className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={handleDateChange}
+                      min={today}
+                      placeholder="dd/mm/aaaa"
+                      max={maxDate}
+                      className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      required
+                      onKeyDown={(e) => e.preventDefault()}
+                    />
+                  </div>
+                  {isWeekend(selectedDate) && <p className="mt-2 text-sm text-red-600">No se permiten reservas los fines de semana</p>}
+                </div>
+
+                <div className="w-full sm:max-w-[48%]">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Hora</label>
+                  <div className="relative flex w-full ">
+                    <div className="   mx-2 flex items-center pointer-events-none">
+                      <Clock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    {AvailableHours.length > 0 ? (
                       <select
-                        className="text-center w-full overflow-hidden py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="text-center w-full h-10  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
-                        onChange={() => setSelectedPeople(event.target.value)}
+                        onChange={() => setSelectedHour(event.target.value)}
                       >
-                        <option value="">Número de personas</option>
-                        {Array.from({ length: 20 }, (_, i) => (
-                          <option key={i + 1} value={i + 1}>
-                            {i + 1} persona{i + 1 > 1 ? "s" : ""}
-                          </option>
-                        ))}
+                        <option value="">Selecciona una hora</option>
+                        {AvailableHours.map((hour, index) => {
+                          return (
+                            <option key={index} value={hour.hour} disabled={!hour.available}>
+                              {hour.hour}
+                            </option>
+                          );
+                        })}
                       </select>
-                    </div>
+                    ) : (
+                      <select
+                        className="text-center  w-full h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        required
+                        disabled
+                      >
+                        <option value="">Selecciona una fecha</option>
+                      </select>
+                    )}
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
-                >
-                  Confirmar Reserva
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div>
-              <h1 className=" w-full px-2 text-left text-xl mb-5"> Pendientes</h1>
-              {pendingReservations.length === 0 && <h1 className="text-center">No hay reservas pendientes</h1>}
+                <div className="w-full sm:pt-9">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Número de Personas</label>
+                  <div className="relative flex w-full ">
+                    <div className="   mx-2 flex items-center pointer-events-none">
+                      <Users className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <select
+                      className="text-center w-full overflow-hidden py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      required
+                      onChange={() => setSelectedPeople(event.target.value)}
+                    >
+                      <option value="">Número de personas</option>
+                      {Array.from({ length: 20 }, (_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          {i + 1} persona{i + 1 > 1 ? "s" : ""}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
 
-              {pendingReservations.map((reservation, index) => (
-                <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
-              ))}
-            </div>
-          )}
+              <button
+                type="submit"
+                className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
+              >
+                Confirmar Reserva
+              </button>
+            </form>
+          </div>
         </div>
         <div className="bg-[white] shadow-xl p-10  w-full max-w-[1000px] rounded-lg text-black">
           {role == "client" ? (
@@ -350,6 +385,16 @@ function Hikari() {
               {confirmedReservations.map((reservation, index) => (
                 <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
               ))}
+              <div className="w-full my-5 border border-[#3f3f3f62]"></div>
+
+              <div>
+                <h1 className=" w-full px-2 text-left text-xl mb-5"> Pendientes</h1>
+                {pendingReservations.length === 0 && <h1 className="text-center">No hay reservas pendientes</h1>}
+
+                {pendingReservations.map((reservation, index) => (
+                  <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
+                ))}
+              </div>
 
               <div className="w-full my-5 border border-[#3f3f3f62]"></div>
 
