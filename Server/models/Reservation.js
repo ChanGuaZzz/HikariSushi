@@ -60,6 +60,11 @@ Reservation.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    tableCapacity : {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+
     date: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -74,10 +79,6 @@ Reservation.init(
       validate: {
         min: 1,
       },
-    },
-    tableNumber: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
     },
     status: {
       type: DataTypes.ENUM('confirmed', 'cancelled'),

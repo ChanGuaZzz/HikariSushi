@@ -1,15 +1,15 @@
 import { Op, Sequelize } from "sequelize";
 import Reservation from "../models/Reservation.js";
 import transporter from "../config/mailer.js";
-import { allHours, numberOfTables, peopleForTable } from "../app.js";
 import DateReservation from "../models/DateReservation.js";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { da, es, se } from "date-fns/locale";
+import Settings from "../models/Settings.js";
 
-  const html= (status, customerName, date, hour) => {
-    const formattedDate = format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
-    if(status === "confirmed"){
-      return `
+const html = (status, customerName, date, hour) => {
+  const formattedDate = format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
+  if (status === "confirmed") {
+    return `
       <h1>Estado de la reserva: <span style="color: green">Confirmada</span>  </h1>
       <h2>Estimado/a ${customerName}🥋,</h2>
       <p>Le informamos que su reserva para el dia <b>${formattedDate}</b> a las </b>${hour}<b>
@@ -32,10 +32,9 @@ import { es } from "date-fns/locale";
       <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
 
 
-      `
-
-      }
-      return `
+      `;
+  }
+  return `
       <h1>Estado de la reserva: <span style="color: red">Cancelada</span> </h1>
       <h2>Estimado/a ${customerName}🥋,</h2>
       <p>Le informamos que su reserva para el dia <b>${formattedDate}</b> a las </b>${hour}<b>
@@ -55,16 +54,18 @@ import { es } from "date-fns/locale";
 
       <img src="https://www.granadadigital.es/wp-content/uploads/2022/04/sushi-2853382_960_720.jpg" alt="Hikari Sushi" width="500" height="200">
 
-      `
-
-  }
-
+      `;
+};
 
 const reserveTable = async (req, res) => {
   let admincreate = false;
-  let BusyTables = 0;
+  let busyTables = 1;
 
   try {
+    const settings = await Settings.findOne();
+    if (!settings) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     if (req.session.user === null) {
       return res.status(401).json({ message: "Unauthorized" });
     } else if (!req.body.reservation) {
@@ -78,7 +79,6 @@ const reserveTable = async (req, res) => {
     if (name && phone) {
       admincreate = true;
     }
-    console.log(numberOfTables);
 
     const ReserveDateExists = await Reservation.findOne({
       where: {
@@ -105,24 +105,41 @@ const reserveTable = async (req, res) => {
       dateReservation = await DateReservation.create({
         date: new Date(date),
         hour,
-        availableTables: numberOfTables,
+        typeOfTables: settings.typeOfTables,
       });
     }
-    BusyTables = Math.ceil(people / peopleForTable);
-    console.log("personas ", people, " y ocupa ", BusyTables, " mesas");
 
-    if (BusyTables > dateReservation.availableTables) {
-      console.log("No hay mesas disponibles");
-      return res.status(401).json({ message: "No hay mesas disponibles" });
+    const tables = dateReservation.typeOfTables; // [{"qty":20,"capacity":2},{"qty":4,"capacity":4},{"qty":5,"capacity":8}]
+    //PROGRAMAR EL BUCLE FOR DEL DISCORD
+    let tableCapacity = dateReservation.typeOfTables[0].capacity;
+
+    for (let i = 0; i < tables.length; i++) {
+      if (tables[i].qty > 0) {
+        if (people >= tables[i].capacity) {
+          busyTables = Math.round(people / tables[i].capacity);
+          tableCapacity = tables[i].capacity;
+        } else {
+          break;
+        }
+      }
     }
-    dateReservation.availableTables = dateReservation.availableTables - BusyTables;
-    await dateReservation.save();
+    console.log("personas ", people, " y ocupa ", busyTables, " mesas de ", tableCapacity, " personas");
+
+    dateReservation.typeOfTables = tables.map((table) => {
+      if (table.capacity === tableCapacity) {
+        table.qty -= busyTables;
+      }
+      return table;
+    });
+    await dateReservation.save(); // actualiza las mesas
+
     if (admincreate) {
       const reservation = await Reservation.create({
         customerName: name,
         customerEmail: "usuario@creado.admin",
         customerPhone: phone,
-        busyTables: BusyTables,
+        busyTables,
+        tableCapacity,
         date,
         hour,
         people,
@@ -137,28 +154,28 @@ const reserveTable = async (req, res) => {
       customerName: req.session.user.name,
       customerEmail: req.session.user.email,
       customerPhone: req.session.user.phone,
-      busyTables: BusyTables,
+      busyTables,
+      tableCapacity,
       date,
       hour,
       people,
     });
 
     await transporter
-    .sendMail({
-      from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
-      to: reservation.customerEmail, // list of receivers
-      subject: "Reserva", // Subject line
-      html: html(reservation.status, reservation.customerName, reservation.date, reservation.hour), // html body
-    })
-    .then((info) => {
-      console.log("Message sent: %s", info.messageId);
-    })
-    .catch((error) => {
-      console.error("Error al enviar el correo:", error);
-    });
+      .sendMail({
+        from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
+        to: reservation.customerEmail, // list of receivers
+        subject: "Reserva", // Subject line
+        html: html(reservation.status, reservation.customerName, reservation.date, reservation.hour), // html body
+      })
+      .then((info) => {
+        console.log("Message sent: %s", info.messageId);
+      })
+      .catch((error) => {
+        console.error("Error al enviar el correo:", error);
+      });
 
     console.log("Reserva creada con exito");
-
 
     // console.log(reservation);
     return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
@@ -208,7 +225,6 @@ const getReservations = async (req, res) => {
         "customerName",
         "customerEmail",
         "customerPhone",
-        "tableNumber",
         "date",
         [
           Sequelize.literal(`
@@ -261,10 +277,16 @@ const getAvailableHours = async (req, res) => {
   }
 
   try {
+    const AvailableHours = [];
+    let allHours;
 
-    const AvailableHours= [];
+    const settings = await Settings.findOne();
+    if (!settings) {
+      return res.status(200).json(AvailableHours);
+    }
 
-    for(let i = 0; i < allHours.length; i++){
+    allHours = settings.allHours;
+    for (let i = 0; i < allHours.length; i++) {
       let dateReservation = await DateReservation.findOne({
         where: {
           date: new Date(date),
@@ -275,21 +297,24 @@ const getAvailableHours = async (req, res) => {
         dateReservation = await DateReservation.create({
           date: new Date(date),
           hour: allHours[i],
-          availableTables: numberOfTables,
+          typeOfTables: settings.typeOfTables, // [{ qty: 20, capacity: 4 }, { qty: 10, capacity: 6 }],
         });
       }
-      if(dateReservation.availableTables > 0){
-        AvailableHours.push({hour: allHours[i], available: true});
-      }else{
-        AvailableHours.push({hour: allHours[i], available: true});
 
+      console.log(dateReservation.typeOfTables, " MESAS DE LA FECHA");
 
+      const availableTables = dateReservation.typeOfTables.reduce((total, table) => total + table.qty, 0);
+
+      console.log(availableTables, "MESAS DISPONIBLES A LA HORA", allHours[i]);
+
+      if (dateReservation.availableTables > 0) {
+        AvailableHours.push({ hour: allHours[i], available: true });
+      } else {
+        AvailableHours.push({ hour: allHours[i], available: true });
       }
     }
 
     console.log(AvailableHours);
-
-
 
     return res.status(200).json(AvailableHours);
   } catch (error) {
@@ -325,7 +350,13 @@ const reservationManage = async (req, res) => {
             hour: reservation.hour,
           },
         });
-        dateReservation.availableTables = dateReservation.availableTables + reservation.busyTables;
+        
+        dateReservation.typeOfTables = dateReservation.typeOfTables.map((table) => {
+          if (table.capacity === reservation.tableCapacity) {
+            table.qty += reservation.busyTables;
+          }
+          return table;
+        });
         await dateReservation.save();
       }
       console.log("Reserva actualizada con exito");

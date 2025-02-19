@@ -1,10 +1,9 @@
-import { Model, DataTypes } from 'sequelize';
-import sequelize from '../config/db.js'; // Importar la configuración de Sequelize
-import bcrypt from 'bcrypt';
+import { Model, DataTypes } from "sequelize";
+import sequelize from "../config/db.js"; // Importar la configuración de Sequelize
+import bcrypt from "bcrypt";
 
 class DateReservation extends Model {
   // Método para confirmar una reserva
-  
 }
 
 DateReservation.init(
@@ -22,15 +21,20 @@ DateReservation.init(
       type: DataTypes.TIME,
       allowNull: false,
     },
-    availableTables: {
-      type: DataTypes.INTEGER,
+    typeOfTables: {
+      type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 20,
+      get() {
+        return JSON.parse(this.getDataValue("typeOfTables"));
+      },
+      set(val) {
+        this.setDataValue("typeOfTables", JSON.stringify(val));
+      },
     },
   },
   {
     sequelize, // Instancia de Sequelize
-    modelName: 'DateReservation',
+    modelName: "DateReservation",
   }
 );
 

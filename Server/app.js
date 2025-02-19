@@ -47,10 +47,13 @@ app.use(express.json());
 
 app.use("/", userRoutes);
 
-let numberOfTables = 20;
-let peopleForTable = 4;
-let allHours = ["9:00", "12:00", "14:00", "16:00", "21:00"];
 
+
+// const settings = await Settings.findOne();
+//   if (settings) {
+//     typeOfTables = settings.typeOfTables;
+//     allHours = settings.allHours;
+//   }
 
 const server = createServer(app);
 
