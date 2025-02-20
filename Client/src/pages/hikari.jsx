@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DoorOpen, Calendar, Clock, Users, User, PhoneCall } from "lucide-react";
+import { DoorOpen, Calendar, Clock, Users, User, PhoneCall, CircleXIcon, PlusCircle, SaveIcon } from "lucide-react";
 import { use } from "react";
 import ReservationsBox from "../components/ReservationsBox";
 import Loading from "../components/loading";
@@ -11,6 +11,7 @@ import ChangePassword from "../components/changepassword";
 import ChangeEmail from "../components/changeemail";
 import HoursBox from "../components/hoursBox";
 import TablesBox from "../components/tablesBox";
+import AdminConfig from "../sections/adminconfig";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
 //   withCredentials: true,
@@ -35,8 +36,10 @@ function Hikari() {
   const [role, setRole] = useState("");
   const [nameReservation, setNameReservation] = useState("");
   const [phoneReservation, setPhoneReservation] = useState("");
-  const [allHours, setAllHours] = useState(["9:00", "12:00", "14:00", "16:00", "19:00"]);
-  const [tables, setTables] = useState([{qty: 4, capacity: 2},{qty: 10, capacity: 4},{qty: 3, capacity: 6}]);
+  const [settings, setSettings] = useState({
+    allHours: [],
+    typeOfTables: [],
+  });
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
@@ -169,6 +172,17 @@ function Hikari() {
           putReservations(res.data.user.role);
           setRole(res.data.user.role);
           setLoading(false);
+          if (res.data.user.role == "admin") {
+            axios
+              .get(`${import.meta.env.VITE_API_URL}/getSettings`, { withCredentials: true })
+              .then((res) => {
+                setSettings(res.data);
+                console.log(res.data, "settings");
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
           //console.log("Usuario logueado");
         }
       })
@@ -419,32 +433,7 @@ function Hikari() {
         </div>
 
         {role == "admin" && (
-          <>
-            <div className="bg-[white] flex justify-evenly flex-wrap  shadow-xl p-10  w-full max-w-[1000px] rounded-lg text-black">
-              <div className="w-[30%] min-w-[200px]">
-                <h1>Horas</h1>
-                <div className="flex w-full mt-3 flex-col max-h-[300px] overflow-y-auto">
-                {allHours.map((hour, index) => (
-                 <>
-                  <HoursBox hour={hour} index={index} handleDelete={() => {}} />
-                 </>
-                ))}
-                </div>
-
-              </div>
-              <div className="w-[30%] min-w-[200px]">
-              <h1>Mesas</h1>
-                <div className="flex w-full mt-3 flex-col max-h-[300px] overflow-y-auto">
-                {tables.map((table, index) => (
-                 <>
-                 <TablesBox qty={table.qty} capacity={table.capacity} index={index} handleDelete={() => {}} handleEdit={() => {}} />
-                 </>
-                ))}
-                </div>
-
-                </div>
-            </div>
-          </>
+          <AdminConfig settings={settings} setSettings={setSettings} />
         )}
       </div>
     </div>

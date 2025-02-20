@@ -269,19 +269,6 @@ const getReservations = async (req, res) => {
   }
 };
 
-const getSettings = async (req, res) => {
-  try {
-    const settings = await Settings.findOne();
-    if (!settings) {
-      return res.status(404).json({ message: "Settings not found" });
-    }
-    return res.status(200).json(settings);
-  } catch (error) {
-    console.error("Error al obtener la configuración:", error);
-    return res.status(500).json({ message: "Error interno del servidor" });
-  }
-};
-
 const getAvailableHours = async (req, res) => {
   const { date } = req.query;
 
@@ -400,4 +387,4 @@ const reservationManage = async (req, res) => {
   }
 };
 
-export { reserveTable, getReservations, getAvailableHours, getSettings, reservationManage };
+export { reserveTable, getReservations, getAvailableHours, reservationManage };
