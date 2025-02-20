@@ -16,7 +16,7 @@ router.post("/reserve", reserveTable);
 router.post("/getreservations", getReservations);
 router.get("/gethours", getAvailableHours);
 router.post("/reservationManage", reservationManage);
-router.get("/getSettings", getSettingsings);
+router.get("/getSettings", getSettings);
 router.post("/setSettings", setSettings);
 
 
