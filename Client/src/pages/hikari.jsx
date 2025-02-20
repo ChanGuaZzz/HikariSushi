@@ -9,7 +9,7 @@ import ModalMessage from "../components/modalMessage";
 import GeneralModal from "../components/generalmodal";
 import ChangePassword from "../components/changepassword";
 import ChangeEmail from "../components/changeemail";
-import HoursBox from "../components/HoursBox";
+import HoursBox from "../components/hoursBox";
 import TablesBox from "../components/tablesBox";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
