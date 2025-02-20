@@ -47,8 +47,6 @@ app.use(express.json());
 
 app.use("/", userRoutes);
 
-
-
 // const settings = await Settings.findOne();
 //   if (settings) {
 //     typeOfTables = settings.typeOfTables;
@@ -64,4 +62,4 @@ const server = createServer(app);
 // });
 
 
-export {server, numberOfTables, peopleForTable, allHours};
+export {server};
