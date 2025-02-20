@@ -433,7 +433,7 @@ function Hikari() {
         </div>
 
         {role == "admin" && (
-          <AdminConfig settings={settings} setSettings={setSettings} />
+          <AdminConfig settings={settings} setSettings={setSettings} setLoading={setLoading} />
         )}
       </div>
     </div>
