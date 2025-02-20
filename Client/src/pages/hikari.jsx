@@ -9,6 +9,8 @@ import ModalMessage from "../components/modalMessage";
 import GeneralModal from "../components/generalmodal";
 import ChangePassword from "../components/changepassword";
 import ChangeEmail from "../components/changeemail";
+import HoursBox from "../components/HoursBox";
+import TablesBox from "../components/tablesBox";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
 //   withCredentials: true,
@@ -22,7 +24,6 @@ function Hikari() {
   const [selectedPeople, setSelectedPeople] = useState("");
   const [AvailableHours, setAvailableHours] = useState([]);
   const [Reservations, setReservations] = useState([{}]);
-  const [pendingReservations, setPendingReservations] = useState([{}]);
   const [confirmedReservations, setConfirmedReservations] = useState([{}]);
   const [cancelledReservations, setCancelledReservations] = useState([{}]);
   const [changepass, setchangepass] = useState(false);
@@ -34,6 +35,8 @@ function Hikari() {
   const [role, setRole] = useState("");
   const [nameReservation, setNameReservation] = useState("");
   const [phoneReservation, setPhoneReservation] = useState("");
+  const [allHours, setAllHours] = useState(["9:00", "12:00", "14:00", "16:00", "19:00"]);
+  const [tables, setTables] = useState([{qty: 4, capacity: 2},{qty: 10, capacity: 4},{qty: 3, capacity: 6}]);
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
@@ -145,9 +148,6 @@ function Hikari() {
         setReservations(res);
       });
     } else {
-      getReservations("pending").then((res) => {
-        setPendingReservations(res);
-      });
       getReservations("confirmed").then((res) => {
         setConfirmedReservations(res);
       });
@@ -234,7 +234,6 @@ function Hikari() {
         <div className="bg-[white] shadow-xl p-10 w-full max-w-[1000px] rounded-lg text-black">
           <div>
             <h1 className=" w-full px-2 text-left text-xl mb-5">Nueva Reserva</h1>
-
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="flex flex-wrap justify-between space-y-6 sm:space-y-0">
                 {role == "admin" && (
@@ -381,17 +380,9 @@ function Hikari() {
           ) : (
             <>
               <h1 className=" w-full px-2 text-left text-xl">Confirmadas</h1>
-              {confirmedReservations.length === 0 && <h1 className="text-center">No hay reservas confirmadas</h1>}
-              {confirmedReservations.map((reservation, index) => (
-                <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
-              ))}
-              <div className="w-full my-5 border border-[#3f3f3f62]"></div>
-
-              <div>
-                <h1 className=" w-full px-2 text-left text-xl mb-5"> Pendientes</h1>
-                {pendingReservations.length === 0 && <h1 className="text-center">No hay reservas pendientes</h1>}
-
-                {pendingReservations.map((reservation, index) => (
+              <div className="size-full rounded-lg max-h-[500px] overflow-y-auto">
+                {confirmedReservations.length === 0 && <h1 className="text-center">No hay reservas confirmadas</h1>}
+                {confirmedReservations.map((reservation, index) => (
                   <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
                 ))}
               </div>
@@ -399,10 +390,12 @@ function Hikari() {
               <div className="w-full my-5 border border-[#3f3f3f62]"></div>
 
               <h1 className=" w-full px-2 text-left text-xl">Canceladas</h1>
-              {cancelledReservations.length === 0 && <h1 className="text-center">No hay reservas canceladas</h1>}
-              {cancelledReservations.map((reservation, index) => (
-                <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
-              ))}
+              <div className="size-full rounded-lg max-h-[500px] overflow-y-auto">
+                {cancelledReservations.length === 0 && <h1 className="text-center">No hay reservas canceladas</h1>}
+                {cancelledReservations.map((reservation, index) => (
+                  <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
+                ))}
+              </div>
             </>
           )}
         </div>
@@ -424,6 +417,35 @@ function Hikari() {
             Cambiar contraseña
           </button>
         </div>
+
+        {role == "admin" && (
+          <>
+            <div className="bg-[white] flex justify-evenly flex-wrap  shadow-xl p-10  w-full max-w-[1000px] rounded-lg text-black">
+              <div className="w-[30%] min-w-[200px]">
+                <h1>Horas</h1>
+                <div className="flex w-full mt-3 flex-col max-h-[300px] overflow-y-auto">
+                {allHours.map((hour, index) => (
+                 <>
+                  <HoursBox hour={hour} index={index} handleDelete={() => {}} />
+                 </>
+                ))}
+                </div>
+
+              </div>
+              <div className="w-[30%] min-w-[200px]">
+              <h1>Mesas</h1>
+                <div className="flex w-full mt-3 flex-col max-h-[300px] overflow-y-auto">
+                {tables.map((table, index) => (
+                 <>
+                 <TablesBox qty={table.qty} capacity={table.capacity} index={index} handleDelete={() => {}} handleEdit={() => {}} />
+                 </>
+                ))}
+                </div>
+
+                </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

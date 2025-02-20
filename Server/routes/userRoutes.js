@@ -1,6 +1,6 @@
 import express from "express";
 import { registerUser, loginUser, logoutUser, changeData } from "../controllers/userController.js";
-import { reserveTable, getAvailableHours, getReservations, reservationManage } from "../controllers/reserveController.js";
+import { reserveTable, getAvailableHours, getReservations, reservationManage, getSettings } from "../controllers/reserveController.js";
 
 const router = express.Router();
 
@@ -15,6 +15,7 @@ router.post("/reserve", reserveTable);
 router.post("/getreservations", getReservations);
 router.get("/gethours", getAvailableHours);
 router.post("/reservationManage", reservationManage);
+router.get("/getSettings", getSettings);
 
 
 export default router;
