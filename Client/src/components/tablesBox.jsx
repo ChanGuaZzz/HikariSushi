@@ -9,6 +9,7 @@ function TablesBox({ qty, capacity, index, handleDelete, handleEdit, isAddingTab
           <div className="py-1 mx-1  items-center flex flex-col ">
             <input
               placeholder="#"
+              type="number"
               value={qtyNewTable}
               onChange={(e) => {
                 setQtyNewTable(e.target.value);
@@ -20,6 +21,7 @@ function TablesBox({ qty, capacity, index, handleDelete, handleEdit, isAddingTab
           <div className="py-1 mx-1  items-center flex flex-col ">
             <input
               placeholder="#"
+              type="number"
               value={capacityNewTable}
               onChange={(e) => {
                 setCapacityNewTable(e.target.value);
