@@ -46,11 +46,11 @@ function ReservationsBox({ reservation, role, update, setLoading }) {
         .then((res) => {
           //console.log(res);
           update();
-          
         })
         .catch((err) => {
           //console.log(err);
-        }).finally(()=>{
+        })
+        .finally(() => {
           setLoading(false);
         });
     } else {
@@ -63,7 +63,8 @@ function ReservationsBox({ reservation, role, update, setLoading }) {
         })
         .catch((err) => {
           //console.log(err);
-        }).finally(()=>{
+        })
+        .finally(() => {
           setLoading(false);
         });
     }
@@ -125,29 +126,29 @@ function ReservationsBox({ reservation, role, update, setLoading }) {
         </div>
         <span className="text-[#ff851c]">{reservation.hour} </span>{" "}
       </div>
-      <div className="flex flex-col ml-5 w-[70%] space-y-1">
-        <div className=" sm:text-lg">{capitalizedDate}</div>
+      <div className="flex flex-col pl-3 w-[70%] space-y-1">
+        <div className="text-[80%] sm:text-lg">{capitalizedDate}</div>
         <div className="text-sm flex flex-wrap items-center space-y-1  ">
           <div className=" flex items-center opacity-55">
-            <UsersRound className=" mx-2 h-4 w-4 text-gray-400 flex items-center" />
+            <UsersRound className="  h-4 w-4 text-gray-400 flex items-center" />
             <h2>{reservation.people} Persona/s </h2>
           </div>
           <div className="w-[80%] overflow-hidden">
             {role !== "client" ? (
-              <>
+              <div>
                 <div className="flex items-center">
-                  <SquareUser className=" mx-2 h-3 w-3 text-gray-400 flex items-center" />
-                  <h2 className="text-xs overflow-hidden h-4 w-full"> {reservation.customerName}</h2>
+                  <SquareUser className="  size-[13px] text-gray-400 flex items-center" />
+                  <h2 className="text-xs pl-1 overflow-hidden h-4 w-full"> {reservation.customerName}</h2>
                 </div>
                 <div className="flex items-center">
-                  <PhoneCall className=" mx-2 h-3 w-3 text-gray-400 flex items-center" />
-                  <h2 className="text-xs overflow-hidden h-4 w-full text-blue-500"> {reservation.customerPhone}</h2>
+                  <PhoneCall className="  size-[13px] text-gray-400 flex items-center" />
+                  <h2 className="text-xs pl-1 overflow-hidden h-4 w-full text-blue-500"> {reservation.customerPhone}</h2>
                 </div>
                 <div className="flex items-center">
-                  <Mail className=" mx-2 h-3 w-3 text-gray-400 flex items-center" />
-                  <h2 className="text-xs overflow-x-auto scroll h-4 w-full text-blue-500"> {reservation.customerEmail}</h2>
+                  <Mail className="  size-[13px] text-gray-400 flex items-center" />
+                  <h2 className="text-xs pl-1 overflow-x-auto scroll h-4 w-full text-blue-500"> {reservation.customerEmail}</h2>
                 </div>
-              </>
+              </div>
             ) : (
               <div
                 className={`${reservation.status == "confirmed" ? "text-[#28d428]" : reservation.status == "canceled" ? "text-[#fa3232]" : "text-gray-500"}`}

@@ -60,7 +60,7 @@ function Login() {
         .catch((err) => {
           //console.log(err.response.data.message);
           setError(err.response.data.message || "Error al crear usuario");
-        });
+        }).finally(()=>setLoading(false));
     }
   };
 

@@ -30,7 +30,19 @@ const setSettings = async (req, res) => {
         return res.status(400).json({ message: "No se ha enviado ninguna hora" });
       }
 
-      console.log(allHours);
+      console.log(allHours, "asi entran las horas");
+
+      //ordenar las horas de menor a mayor
+      allHours.sort((a, b) => {
+        const [hourA, minuteA] = a.split(":").map(Number);
+        const [hourB, minuteB] = b.split(":").map(Number);
+    
+        if (hourA !== hourB) return hourA - hourB;
+        return minuteA - minuteB;
+    });
+    
+
+      console.log(allHours, "asi quedan las horas");
 
       settings.allHours = allHours;
       await settings.save();

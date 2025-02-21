@@ -176,8 +176,12 @@ function Hikari() {
             axios
               .get(`${import.meta.env.VITE_API_URL}/getSettings`, { withCredentials: true })
               .then((res) => {
-                setSettings(res.data);
-                console.log(res.data, "settings");
+                const settings = res.data;
+                if(settings.allHours[0]==""){
+                  settings.allHours = [];
+                }
+                setSettings(settings);
+                console.log(settings, "settings");
               })
               .catch((err) => {
                 console.log(err);
@@ -395,7 +399,7 @@ function Hikari() {
             <>
               <h1 className=" w-full px-2 text-left text-xl">Confirmadas</h1>
               <div className="size-full rounded-lg max-h-[500px] overflow-y-auto">
-                {confirmedReservations.length === 0 && <h1 className="text-center">No hay reservas confirmadas</h1>}
+                {confirmedReservations.length === 0 &&  <h1 className="text-xs opacity-35 text-center">No hay reservas confirmadas</h1>}
                 {confirmedReservations.map((reservation, index) => (
                   <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
                 ))}
@@ -405,7 +409,7 @@ function Hikari() {
 
               <h1 className=" w-full px-2 text-left text-xl">Canceladas</h1>
               <div className="size-full rounded-lg max-h-[500px] overflow-y-auto">
-                {cancelledReservations.length === 0 && <h1 className="text-center">No hay reservas canceladas</h1>}
+                {cancelledReservations.length === 0 && <h1 className="text-xs opacity-35 text-center">No hay reservas canceladas</h1>}
                 {cancelledReservations.map((reservation, index) => (
                   <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
                 ))}
