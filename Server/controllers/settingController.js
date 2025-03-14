@@ -54,6 +54,9 @@ const setSettings = async (req, res) => {
         return res.status(400).json({ message: "No se ha enviado ninguna mesa" });
       }
 
+      typeOfTables.sort((a, b) => {
+        return a.capacity - b.capacity;
+      });
       console.log(typeOfTables);
       settings.typeOfTables = typeOfTables;
       await settings.save();

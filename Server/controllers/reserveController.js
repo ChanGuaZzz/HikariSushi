@@ -59,7 +59,6 @@ const html = (status, customerName, date, hour) => {
 
 const reserveTable = async (req, res) => {
   let admincreate = false;
-  let busyTables = 1;
 
   try {
     const settings = await Settings.findOne();
@@ -108,77 +107,94 @@ const reserveTable = async (req, res) => {
         typeOfTables: settings.typeOfTables,
       });
     }
-
+    let busyTables = 1;
     const tables = dateReservation.typeOfTables; // [{"qty":20,"capacity":2},{"qty":4,"capacity":4},{"qty":5,"capacity":8}]
     //PROGRAMAR EL BUCLE FOR DEL DISCORD
+    let thereTable = false;
     let tableCapacity = dateReservation.typeOfTables[0].capacity;
 
     for (let i = 0; i < tables.length; i++) {
+      console.log("mesa ", tables[i].capacity, " con ", tables[i].qty, " mesas disponibles");
+
       if (tables[i].qty > 0) {
-        if (people >= tables[i].capacity) {
-          busyTables = Math.round(people / tables[i].capacity);
+        console.log("hay mesas disponibles en esta mesa");
+
+        // Calculate how many tables of this size would be needed
+        const neededTables = Math.round(people / tables[i].capacity);
+
+        // Check if we have enough tables of this size
+        if (neededTables <= tables[i].qty) {
+          thereTable = true;
+          busyTables = neededTables;
           tableCapacity = tables[i].capacity;
-        } else {
-          break;
+          console.log(`Asignando ${busyTables} mesas de capacidad ${tableCapacity}`);
+          break; // Exit the loop since we found suitable tables
         }
       }
+      console.log("thereTable", thereTable);
     }
-    console.log("personas ", people, " y ocupa ", busyTables, " mesas de ", tableCapacity, " personas");
 
-    dateReservation.typeOfTables = tables.map((table) => {
-      if (table.capacity === tableCapacity) {
-        table.qty -= busyTables;
+    if (thereTable === true) {
+      console.log("Hay mesas disponibles para esa cantidad de personas");
+      console.log("personas ", people, " y ocupa ", busyTables, " mesas de ", tableCapacity, " personas");
+
+      dateReservation.typeOfTables = tables.map((table) => {
+        if (table.capacity === tableCapacity) {
+          table.qty -= busyTables;
+        }
+        return table;
+      });
+      await dateReservation.save(); // actualiza las mesas
+
+      if (admincreate) {
+        const reservation = await Reservation.create({
+          customerName: name,
+          customerEmail: "usuario@creado.admin",
+          customerPhone: phone,
+          busyTables,
+          tableCapacity,
+          date,
+          hour,
+          people,
+        });
+        // console.log(reservation);
+        console.log("Reserva creada con exito");
+
+        return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
       }
-      return table;
-    });
-    await dateReservation.save(); // actualiza las mesas
 
-    if (admincreate) {
       const reservation = await Reservation.create({
-        customerName: name,
-        customerEmail: "usuario@creado.admin",
-        customerPhone: phone,
+        customerName: req.session.user.name,
+        customerEmail: req.session.user.email,
+        customerPhone: req.session.user.phone,
         busyTables,
         tableCapacity,
         date,
         hour,
         people,
       });
-      // console.log(reservation);
+
+      await transporter
+        .sendMail({
+          from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
+          to: reservation.customerEmail, // list of receivers
+          subject: "Reserva", // Subject line
+          html: html(reservation.status, reservation.customerName, reservation.date, reservation.hour), // html body
+        })
+        .then((info) => {
+          console.log("Message sent: %s", info.messageId);
+        })
+        .catch((error) => {
+          console.error("Error al enviar el correo:", error);
+        });
+
       console.log("Reserva creada con exito");
 
+      // console.log(reservation);
       return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
+    } else {
+      return res.status(401).json({ message: "No hay mesas disponibles para esa cantidad de personas" });
     }
-
-    const reservation = await Reservation.create({
-      customerName: req.session.user.name,
-      customerEmail: req.session.user.email,
-      customerPhone: req.session.user.phone,
-      busyTables,
-      tableCapacity,
-      date,
-      hour,
-      people,
-    });
-
-    await transporter
-      .sendMail({
-        from: '"Hikari Restaurant 🍣" <officialhikarisushi@gmail.com>', // sender address
-        to: reservation.customerEmail, // list of receivers
-        subject: "Reserva", // Subject line
-        html: html(reservation.status, reservation.customerName, reservation.date, reservation.hour), // html body
-      })
-      .then((info) => {
-        console.log("Message sent: %s", info.messageId);
-      })
-      .catch((error) => {
-        console.error("Error al enviar el correo:", error);
-      });
-
-    console.log("Reserva creada con exito");
-
-    // console.log(reservation);
-    return res.status(201).json({ message: "Reserva pendiente, le sera enviado por correo la confirmacion de la reserva" });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });

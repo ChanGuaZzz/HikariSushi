@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Utensils, UsersRound, PhoneCall, SquareUser, Mail } from "lucide-react";
+import { Utensils, UsersRound, PhoneCall, SquareUser, Mail, Table } from "lucide-react";
 import { use } from "react";
 import axios from "axios";
 
@@ -131,9 +131,9 @@ function ReservationsBox({ reservation, role, update, setLoading }) {
         <div className="text-sm flex flex-wrap items-center space-y-1  ">
           <div className=" flex items-center opacity-55">
             <UsersRound className="  h-4 w-4 text-gray-400 flex items-center" />
-            <h2>{reservation.people} Persona/s </h2>
+            <h2 className="pr-2">{reservation.people} Persona/s </h2>
           </div>
-          <div className="w-[80%] overflow-hidden">
+          <div className="w-[80%] max-w-[200px] overflow-hidden">
             {role !== "client" ? (
               <div>
                 <div className="flex items-center">
@@ -156,6 +156,10 @@ function ReservationsBox({ reservation, role, update, setLoading }) {
                 Estado: {reservation.status}
               </div>
             )}
+          </div>
+          <div className=" flex items-center opacity-80">
+            <Table className="  h-4 w-4 text-gray-400 flex items-center" />
+            <h2 className="pr-2"><code className="text-blue-600">{reservation.busyTables}</code> Mesa de <code className="text-blue-600">{reservation.tableCapacity} </code></h2>
           </div>
         </div>
       </div>
