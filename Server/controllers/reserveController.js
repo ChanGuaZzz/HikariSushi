@@ -302,16 +302,33 @@ const getAvailableHours = async (req, res) => {
     }
 
     allHours = settings.allHours;
+    const currentDate = new Date();
+    const requestedDate = new Date(date);
+
     for (let i = 0; i < allHours.length; i++) {
+      const [hour, minute] = allHours[i].split(':').map(Number);
+      const reservationTime = new Date(requestedDate);
+      reservationTime.setHours(hour, minute, 0, 0);
+
+      if (requestedDate.toDateString() === currentDate.toDateString()) {
+        const timeDifference = reservationTime - currentDate;
+        const minutesDifference = timeDifference / (1000 * 60);
+
+        if (minutesDifference <= 45) {
+          continue; // Skip this hour if it's less than 45 minutes away
+        }
+      }
+
       let dateReservation = await DateReservation.findOne({
         where: {
-          date: new Date(date),
+          date: requestedDate,
           hour: allHours[i],
         },
       });
+
       if (!dateReservation) {
         dateReservation = await DateReservation.create({
-          date: new Date(date),
+          date: requestedDate,
           hour: allHours[i],
           typeOfTables: settings.typeOfTables, // [{ qty: 20, capacity: 4 }, { qty: 10, capacity: 6 }],
         });
@@ -323,10 +340,10 @@ const getAvailableHours = async (req, res) => {
 
       console.log(availableTables, "MESAS DISPONIBLES A LA HORA", allHours[i]);
 
-      if (dateReservation.availableTables > 0) {
+      if (availableTables > 0) {
         AvailableHours.push({ hour: allHours[i], available: true });
       } else {
-        AvailableHours.push({ hour: allHours[i], available: true });
+        AvailableHours.push({ hour: allHours[i], available: false });
       }
     }
 
