@@ -113,27 +113,39 @@ const reserveTable = async (req, res) => {
     let thereTable = false;
     let tableCapacity = dateReservation.typeOfTables[0].capacity;
 
-    for (let i = 0; i < tables.length; i++) {
-      console.log("mesa ", tables[i].capacity, " con ", tables[i].qty, " mesas disponibles");
-
-      if (tables[i].qty > 0) {
-        console.log("hay mesas disponibles en esta mesa");
-
-        // Calculate how many tables of this size would be needed
-        const neededTables = Math.round(people / tables[i].capacity);
-
-        // Check if we have enough tables of this size
-        if (neededTables <= tables[i].qty) {
-          thereTable = true;
-          busyTables = neededTables;
-          tableCapacity = tables[i].capacity;
-          console.log(`Asignando ${busyTables} mesas de capacidad ${tableCapacity}`);
-          break; // Exit the loop since we found suitable tables
+               for (let i = 0; i < tables.length; i++) {
+          console.log("mesa ", tables[i].capacity, " con ", tables[i].qty, " mesas disponibles");
+        
+          if (tables[i].qty > 0) {
+            console.log("hay mesas disponibles en esta mesa");
+        
+            // Calculate how many tables of this size would be needed
+            const neededTables = Math.max(1, Math.round(people / tables[i].capacity));
+        
+            // Check if we have enough tables of this size and if the table is not too large
+            const occupancyRate = people / (tables[i].capacity * neededTables);
+            if (neededTables <= tables[i].qty && occupancyRate >= 0.75) {
+              thereTable = true;
+              busyTables = neededTables;
+              tableCapacity = tables[i].capacity;
+              console.log(`Asignando ${busyTables} mesas de capacidad ${tableCapacity}`);
+            } else if (people == 1 && tables[i].capacity == 2 && tables[i].qty > 0) {
+              // Exception: Assign a table for 1 person if a table of capacity >= 2 is available
+              thereTable = true;
+              busyTables = 1;
+              tableCapacity = tables[i].capacity;
+              console.log(`Asignando una mesa de capacidad ${tableCapacity} para 1 persona como excepción`);
+              break; // Exit the loop as we found a suitable table
+            } else {
+              console.log(
+                `La mesa de capacidad ${tables[i].capacity} es demasiado grande para ${people} personas (ocupación: ${(
+                  occupancyRate * 100
+                ).toFixed(2)}%)`
+              );
+            }
+          }
+          console.log("thereTable", thereTable);
         }
-      }
-      console.log("thereTable", thereTable);
-    }
-
     if (thereTable === true) {
       console.log("Hay mesas disponibles para esa cantidad de personas");
       console.log("personas ", people, " y ocupa ", busyTables, " mesas de ", tableCapacity, " personas");
@@ -306,7 +318,7 @@ const getAvailableHours = async (req, res) => {
     const requestedDate = new Date(date);
 
     for (let i = 0; i < allHours.length; i++) {
-      const [hour, minute] = allHours[i].split(':').map(Number);
+      const [hour, minute] = allHours[i].split(":").map(Number);
       const reservationTime = new Date(requestedDate);
       reservationTime.setHours(hour, minute, 0, 0);
 
