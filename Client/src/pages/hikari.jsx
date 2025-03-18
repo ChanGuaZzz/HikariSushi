@@ -12,6 +12,7 @@ import ChangeEmail from "../components/changeemail";
 import HoursBox from "../components/hoursBox";
 import TablesBox from "../components/tablesBox";
 import AdminConfig from "../sections/adminconfig";
+import BlockReservationModal from "../components/BlockReservationModal";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
 //   withCredentials: true,
@@ -34,16 +35,49 @@ function Hikari() {
   const [message, setMessage] = useState("");
   const [isreserved, setIsReserved] = useState(false);
   const [role, setRole] = useState("");
+  const [canreserve, setCanreserve] = useState(true);
   const [nameReservation, setNameReservation] = useState("");
   const [phoneReservation, setPhoneReservation] = useState("");
   const [settings, setSettings] = useState({
     allHours: [],
     typeOfTables: [],
+    blockConfig: {
+      enabled: false,
+      startDate: "",
+      endDate: "",
+      reason: "",
+    },
   });
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
   };
+
+  // Añadir al hikari.jsx después de la definición de estados
+  const [showBlockModal, setShowBlockModal] = useState(false);
+
+  // Verificar si hay un bloqueo activo
+  useEffect(() => {
+    // Solo verificar si el usuario es cliente y hay configuración de bloqueo
+    console.log(settings, "settings");
+    if (role === "client" && settings?.blockConfig?.enabled && settings.blockConfig.startDate && settings.blockConfig.endDate) {
+      console.log("Verificando bloqueo...");
+      const currentDate = new Date();
+      const startDate = new Date(settings.blockConfig.startDate);
+      const endDate = new Date(settings.blockConfig.endDate);
+
+      // Resetear horas para comparar solo fechas
+      currentDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+
+      // Si la fecha actual está dentro del rango de bloqueo
+      if (currentDate >= startDate && currentDate <= endDate) {
+        setShowBlockModal(true);
+        setCanreserve(false);
+      }
+    }
+  }, [settings, role]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -64,7 +98,11 @@ function Hikari() {
 
   const getReservations = async (status) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/getreservations`, { status: status }, { withCredentials: true });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/getreservations`,
+        { status: status },
+        { withCredentials: true }
+      );
       //console.log(res.data);
       return res.data;
     } catch (err) {
@@ -77,7 +115,14 @@ function Hikari() {
   const handleSubmit = (e) => {
     setLoading(true);
     e.preventDefault();
+    if (!canreserve) {
+      setMessage("No se pueden realizar reservas en este momento.");
+      setModal(true);
+      setIsReserved(false);
+      return;
+    }
 
+    setLoading(true);
     const reservation = {
       date: selectedDate,
       hour: selectedHour,
@@ -146,8 +191,8 @@ function Hikari() {
   const putReservations = async (role) => {
     //console.log(role, "entroooo");
     if (role == "client") {
-      //console.log("entro a client");
       getReservations().then((res) => {
+        console.log(res, "ESTE ES EL RES");
         setReservations(res);
       });
     } else {
@@ -177,11 +222,22 @@ function Hikari() {
               .get(`${import.meta.env.VITE_API_URL}/getSettings`, { withCredentials: true })
               .then((res) => {
                 const settings = res.data;
-                if(settings.allHours[0]==""){
+                if (settings.allHours[0] == "") {
                   settings.allHours = [];
                 }
                 setSettings(settings);
+                setBlockConfig(settings.blockConfig);
                 console.log(settings, "settings");
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          } else {
+            axios
+              .get(`${import.meta.env.VITE_API_URL}/getBlockConfig`, { withCredentials: true })
+              .then((res) => {
+                const settings = res.data;
+                setSettings({ blockConfig: settings.blockConfig });
               })
               .catch((err) => {
                 console.log(err);
@@ -237,6 +293,13 @@ function Hikari() {
         >
           <ChangeEmail setLoading={setLoading} />
         </GeneralModal>
+      )}
+
+      {showBlockModal && (
+        <BlockReservationModal
+          reason={settings?.blockConfig?.reason || "Temporalmente no disponible"}
+          onClose={() => setShowBlockModal(false)}
+        />
       )}
       <div className=" flex absolute w-full justify-center items-center top-6 ">
         <h1 className="simbol text-4xl px-1 text-[#ff3e01]">i</h1>
@@ -296,7 +359,7 @@ function Hikari() {
                 <div className="w-full sm:max-w-[48%]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
                   <div className="relative flex w-full ">
-                    <div className="   mx-2 flex items-center pointer-events-none">
+                    <div className="mx-2 flex items-center pointer-events-none">
                       <Calendar className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
@@ -306,12 +369,17 @@ function Hikari() {
                       min={today}
                       placeholder="dd/mm/aaaa"
                       max={maxDate}
-                      className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      disabled={!canreserve}
+                      className={`text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                        !canreserve ? "bg-gray-100 cursor-not-allowed opacity-70" : ""
+                      }`}
                       required
                       onKeyDown={(e) => e.preventDefault()}
                     />
                   </div>
-                  {isWeekend(selectedDate) && <p className="mt-2 text-sm text-red-600">No se permiten reservas los fines de semana</p>}
+                  {isWeekend(selectedDate) && (
+                    <p className="mt-2 text-sm text-red-600">No se permiten reservas los fines de semana</p>
+                  )}
                 </div>
 
                 <div className="w-full sm:max-w-[48%]">
@@ -371,7 +439,10 @@ function Hikari() {
 
               <button
                 type="submit"
-                className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
+                disabled={!canreserve}
+                className={`w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors ${
+                  canreserve ? "bg-orange-600 text-white hover:bg-orange-700" : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                }`}
               >
                 Confirmar Reserva
               </button>
@@ -399,9 +470,17 @@ function Hikari() {
             <>
               <h1 className=" w-full px-2 text-left text-xl">Confirmadas</h1>
               <div className="size-full rounded-lg max-h-[500px] overflow-y-auto">
-                {confirmedReservations.length === 0 &&  <h1 className="text-xs opacity-35 text-center">No hay reservas confirmadas</h1>}
+                {confirmedReservations.length === 0 && (
+                  <h1 className="text-xs opacity-35 text-center">No hay reservas confirmadas</h1>
+                )}
                 {confirmedReservations.map((reservation, index) => (
-                  <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
+                  <ReservationsBox
+                    setLoading={setLoading}
+                    key={index}
+                    update={putReservations}
+                    role={role}
+                    reservation={reservation}
+                  />
                 ))}
               </div>
 
@@ -409,9 +488,17 @@ function Hikari() {
 
               <h1 className=" w-full px-2 text-left text-xl">Canceladas</h1>
               <div className="size-full rounded-lg max-h-[500px] overflow-y-auto">
-                {cancelledReservations.length === 0 && <h1 className="text-xs opacity-35 text-center">No hay reservas canceladas</h1>}
+                {cancelledReservations.length === 0 && (
+                  <h1 className="text-xs opacity-35 text-center">No hay reservas canceladas</h1>
+                )}
                 {cancelledReservations.map((reservation, index) => (
-                  <ReservationsBox setLoading={setLoading} key={index} update={putReservations} role={role} reservation={reservation} />
+                  <ReservationsBox
+                    setLoading={setLoading}
+                    key={index}
+                    update={putReservations}
+                    role={role}
+                    reservation={reservation}
+                  />
                 ))}
               </div>
             </>
@@ -436,9 +523,7 @@ function Hikari() {
           </button>
         </div>
 
-        {role == "admin" && (
-          <AdminConfig settings={settings} setSettings={setSettings} setLoading={setLoading} />
-        )}
+        {role == "admin" && <AdminConfig settings={settings} setSettings={setSettings} setLoading={setLoading} />}
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { PlusCircle } from "lucide-react";
 import TimeConfigSection from "../components/TimeConfigSection.jsx";
 import TableConfigSection from "../components/TableConfigSection.jsx";
+import BlockConfigSection from "../components/BlockConfigSection.jsx";
 import useSettingsManager from "../hooks/useSettingsManager.jsx";
+import { use } from "react";
 
 function AdminConfig({ settings, setSettings, setLoading }) {
   const {
@@ -24,9 +26,17 @@ function AdminConfig({ settings, setSettings, setLoading }) {
     saveChanges,
     resetData,
     addhour,
-    addNewTable
+    addNewTable,
+    blockConfig,
+    setBlockConfig
   } = useSettingsManager(settings, setSettings, setLoading);
 
+
+  useEffect(() => {
+    if (settings)
+    setBlockConfig(settings.blockConfig);
+  }
+  , [settings]);
   return (
     <div className="bg-[white] flex justify-evenly flex-wrap shadow-xl p-10 w-full max-w-[1000px] rounded-lg text-black">
       <TimeConfigSection 
@@ -57,6 +67,14 @@ function AdminConfig({ settings, setSettings, setLoading }) {
         resetData={resetData}
         addNewTable={addNewTable}
       />
+
+      <div className="w-full mt-8 border-t pt-8">
+        <BlockConfigSection
+          blockConfig={blockConfig}
+          setBlockConfig={setBlockConfig}
+          saveChanges={saveChanges}
+        />
+      </div>
     </div>
   );
 }

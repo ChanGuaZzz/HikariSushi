@@ -10,6 +10,14 @@ function useSettingsManager(settings, setSettings, setLoading) {
   const [capacityNewTable, setCapacityNewTable] = useState(0);
   const [animationSaveTable, setanimationSaveTable] = useState("bg-black");
 
+  // Add new state for block configuration
+  const [blockConfig, setBlockConfig] = useState({
+    enabled: settings?.blockConfig?.enabled || false,
+    startDate: settings?.blockConfig?.startDate || "",
+    endDate: settings?.blockConfig?.endDate || "",
+    reason: settings?.blockConfig?.reason || ""
+  });
+
   // Handle state reset when adding mode changes
   useEffect(() => {
     setNewHour("");
@@ -77,12 +85,12 @@ function useSettingsManager(settings, setSettings, setLoading) {
     setLoading(true);
     setIsAddingHour(false);
     setIsAddingTable(false);
-
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/setSettings`, {
         change,
         allHours: settings.allHours,
         typeOfTables: settings.typeOfTables,
+        blockConfig: blockConfig
       });
       console.log(response.data);
     } catch (err) {
@@ -129,6 +137,14 @@ function useSettingsManager(settings, setSettings, setLoading) {
       getSettings("typeOfTables");
       setanimationSaveTable("bg-black");
     }
+
+    // Reset block config
+    setBlockConfig({
+      enabled: settings?.blockConfig?.enabled || false,
+      startDate: settings?.blockConfig?.startDate || "",
+      endDate: settings?.blockConfig?.endDate || "",
+      reason: settings?.blockConfig?.reason || ""
+    });
   };
 
   const addhour = async () => {
@@ -173,6 +189,9 @@ function useSettingsManager(settings, setSettings, setLoading) {
     addhour,
     addNewTable,
     handleEditTable,
+    // Add block config state and functions
+    blockConfig,
+    setBlockConfig
   };
 }
 

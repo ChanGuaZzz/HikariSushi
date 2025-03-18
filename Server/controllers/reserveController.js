@@ -254,6 +254,8 @@ const getReservations = async (req, res) => {
         "customerEmail",
         "customerPhone",
         "date",
+        "busyTables",
+        "tableCapacity",
         [
           Sequelize.literal(`
           CASE

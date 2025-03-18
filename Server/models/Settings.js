@@ -25,6 +25,29 @@ Settings.init(
         this.setDataValue("allHours", val.join(";"));
       },
     },
+    // Add new blockConfig field
+    blockConfig: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: JSON.stringify({
+        enabled: false,
+        startDate: "",
+        endDate: "",
+        reason: ""
+      }),
+      get() {
+        const rawValue = this.getDataValue("blockConfig");
+        return rawValue ? JSON.parse(rawValue) : {
+          enabled: false,
+          startDate: "",
+          endDate: "",
+          reason: ""
+        };
+      },
+      set(val) {
+        this.setDataValue("blockConfig", JSON.stringify(val));
+      },
+    },
   },
   {
     sequelize, // Instancia de Sequelize
