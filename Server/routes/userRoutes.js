@@ -4,6 +4,9 @@ import { reserveTable, getAvailableHours, getReservations, reservationManage} fr
 import { getSettings, setSettings,getSettingsForClient } from "../controllers/settingController.js";
 
 const router = express.Router();
+router.get("/", (req, res) => {
+  res.send("SERVER RUNNING");
+});
 
 router.get("/getsession", (req, res) => {
   res.json(req.session);
