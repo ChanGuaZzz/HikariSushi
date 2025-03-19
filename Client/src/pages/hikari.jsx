@@ -13,6 +13,8 @@ import HoursBox from "../components/hoursBox";
 import TablesBox from "../components/tablesBox";
 import AdminConfig from "../sections/adminconfig";
 import BlockReservationModal from "../components/BlockReservationModal";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 // import { io } from "socket.io-client";
 // const socket = io("ws://localhost:3000", {
 //   withCredentials: true,
@@ -381,23 +383,27 @@ function Hikari() {
 
                 <div className="w-full sm:max-w-[48%]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
-                  <div className="relative flex w-full ">
+                  <div className="relative flex w-full">
                     <div className="mx-2 flex items-center pointer-events-none">
                       <Calendar className="h-5 w-5 text-gray-400" />
                     </div>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={handleDateChange}
-                      min={today}
-                      placeholder="dd/mm/aaaa"
-                      max={maxDate}
+                    <DatePicker
+                      selected={selectedDate ? new Date(selectedDate) : null}
+                      onChange={(date) => {
+                        if (date) {
+                          const formattedDate = formatDate(date);
+                          handleDateChange({ target: { value: formattedDate } });
+                        }
+                      }}
+                      dateFormat="dd/MM/yyyy"
+                      minDate={new Date(today)}
+                      maxDate={new Date(maxDate)}
+                      placeholderText="dd/mm/aaaa"
                       disabled={!canreserve}
                       className={`text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
                         !canreserve ? "bg-gray-100 cursor-not-allowed opacity-70" : ""
                       }`}
                       required
-                      onKeyDown={(e) => e.preventDefault()}
                     />
                   </div>
                   {isUnavailableDate(selectedDate) && (
