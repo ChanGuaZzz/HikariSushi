@@ -16,7 +16,7 @@ function TimeConfigSection({
 }) {
   return (
     <div className="w-[30%] min-w-[200px]">
-      <h1>Horas</h1>
+      <h1>Horas por dia</h1>
       <div className="p-1 flex w-full mt-3 flex-col max-h-[300px] overflow-y-auto">
         {settings.allHours && settings.allHours.length <= 0 && (
           <h1 className="text-xs opacity-35 text-center">No hay horas disponibles</h1>

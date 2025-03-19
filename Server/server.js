@@ -7,7 +7,7 @@ import Settings from "./models/Settings.js";
 // import "./routes/socketRoutes.js"
 // import "./config/mailer.js"
 dotenv.config();
-sequelize.sync({ alter: true }).then(async () => {
+sequelize.sync({ force: true }).then(async () => {
   //CREA UN USUARIO ADMINISTRADOR
   const hashedPass = bcrypt.hashSync("admin", 10);
 

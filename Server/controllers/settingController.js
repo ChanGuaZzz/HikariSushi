@@ -15,7 +15,7 @@ const getSettings = async (req, res) => {
 };
 
 // New function to get only block config settings
-const getBlockConfig = async (req, res) => {
+const getSettingsForClient = async (req, res) => {
   try {
     const settings = await Settings.findOne();
     if (!settings) {
@@ -23,7 +23,8 @@ const getBlockConfig = async (req, res) => {
     }
     
     return res.status(200).json({ 
-      blockConfig: settings.blockConfig 
+      blockConfig: settings.blockConfig,
+      unavailableDates: settings.unavailableDates  
     });
   } catch (error) {
     console.error("Error al obtener la configuración de bloqueo:", error);
@@ -93,10 +94,22 @@ try {
     await settings.save();
     return res.status(200).json(settings);
   }
+
+  if (change == "unavailableDates") {
+    const { unavailableDates } = req.body;
+    if (!unavailableDates) {
+      return res.status(400).json({ message: "No se ha enviado ninguna hora" });
+    }
+    
+    console.log("Actualizando fechas bloqueadas:", unavailableDates);
+    settings.unavailableDates = unavailableDates;
+    await settings.save();
+    return res.status(200).json(settings);
+  }
 } catch (error) {
   console.error("Error al actualizar la configuración:", error);
   return res.status(500).json({ message: "Error interno del servidor" });
 }
 };
 
-export { getSettings, setSettings, getBlockConfig };
+export { getSettings, setSettings, getSettingsForClient };

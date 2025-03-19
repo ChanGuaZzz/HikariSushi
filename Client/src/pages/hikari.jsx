@@ -47,6 +47,7 @@ function Hikari() {
       endDate: "",
       reason: "",
     },
+    unavailableDates: [],
   });
 
   const formatDate = (date) => {
@@ -162,29 +163,50 @@ function Hikari() {
   const maxDate = formatDate(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
 
   // Function to check if a date is a weekend
-  const isWeekend = (date) => {
+  // Function to check if a date is unavailable
+  const isUnavailableDate = (date) => {
+
+    // If date is empty or invalid, return false
+    if (!date) return false;
+    
     const d = new Date(date);
-    return d.getDay() === 0;
+    
+    // Check if date is valid before proceeding
+    if (isNaN(d.getTime())) return false;
+    
+    // Check if it's a Sunday
+    const isSunday = d.getDay() === 0; // 0 = Sunday
+    
+    // Format the date to match YYYY-MM-DD format for comparison
+    const formattedDate = d.toISOString().split('T')[0];
+    
+    // Check if the date is in the custom disabled dates array
+    const isDisabled = settings.unavailableDates?.includes(formattedDate) || false;    
+    // Return true if either condition is met
+    return isSunday || isDisabled;
   };
 
   const handleDateChange = (e) => {
+
+    if(!settings)return;
+
     const date = new Date(e.target.value);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Establecer la hora a 00:00:00 para comparar solo la fecha
-
+    today.setHours(0, 0, 0, 0);
+  
     const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + 5); // Fecha máxima permitida (5 días después de hoy)
-
+    maxDate.setDate(today.getDate() + 5);
+  
     if (date > maxDate) {
       setIsReserved(false);
       setModal(true);
       setMessage("No es posible reservar más de 5 días antes de la fecha.");
-    } else if (!isWeekend(date)) {
+    } else if (!isUnavailableDate(date)) {
       setSelectedDate(e.target.value);
     } else {
       setIsReserved(false);
       setModal(true);
-      setMessage("No es posible reservar los domingo.");
+      setMessage("No es posible reservar en la fecha seleccionada.");
     }
   };
 
@@ -217,6 +239,7 @@ function Hikari() {
           putReservations(res.data.user.role);
           setRole(res.data.user.role);
           setLoading(false);
+          
           if (res.data.user.role == "admin") {
             axios
               .get(`${import.meta.env.VITE_API_URL}/getSettings`, { withCredentials: true })
@@ -226,7 +249,6 @@ function Hikari() {
                   settings.allHours = [];
                 }
                 setSettings(settings);
-                setBlockConfig(settings.blockConfig);
                 console.log(settings, "settings");
               })
               .catch((err) => {
@@ -234,15 +256,16 @@ function Hikari() {
               });
           } else {
             axios
-              .get(`${import.meta.env.VITE_API_URL}/getBlockConfig`, { withCredentials: true })
+              .get(`${import.meta.env.VITE_API_URL}/getSettingsForClient`, { withCredentials: true })
               .then((res) => {
                 const settings = res.data;
-                setSettings({ blockConfig: settings.blockConfig });
+                setSettings(settings);
               })
               .catch((err) => {
                 console.log(err);
               });
           }
+
           //console.log("Usuario logueado");
         }
       })
@@ -377,7 +400,7 @@ function Hikari() {
                       onKeyDown={(e) => e.preventDefault()}
                     />
                   </div>
-                  {isWeekend(selectedDate) && (
+                  {isUnavailableDate(selectedDate) && (
                     <p className="mt-2 text-sm text-red-600">No se permiten reservas los fines de semana</p>
                   )}
                 </div>

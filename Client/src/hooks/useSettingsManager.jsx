@@ -90,9 +90,11 @@ function useSettingsManager(settings, setSettings, setLoading) {
         change,
         allHours: settings.allHours,
         typeOfTables: settings.typeOfTables,
-        blockConfig: blockConfig
+        blockConfig: blockConfig,
+        unavailableDates: settings.unavailableDates,
       });
       console.log(response.data);
+      setSettings(response.data);
     } catch (err) {
       console.log(err);
     } finally {
