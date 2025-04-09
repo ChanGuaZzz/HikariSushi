@@ -34,7 +34,7 @@ function Header ({isMenuOpen, setIsMenuOpen}) {
     }`}>
     <div className="container mx-auto flex justify-between items-center">
       <div className="flex items-center">
-        <Link to="/">
+        <Link to="/" className="flex items-center">
           <span className={`font-bold text-3xl title transition-colors duration-300 ${
             scrolled ? "text-white" : "text-[#ff3e01]"
           }`}>HIKARI</span>
