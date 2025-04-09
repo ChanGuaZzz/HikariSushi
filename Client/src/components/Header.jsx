@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 function Header ({isMenuOpen, setIsMenuOpen}) {
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isMenuPage = location.pathname === "/menu";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,19 +34,41 @@ function Header ({isMenuOpen, setIsMenuOpen}) {
     }`}>
     <div className="container mx-auto flex justify-between items-center">
       <div className="flex items-center">
-        <span className={`font-bold text-3xl title transition-colors duration-300 ${
-          scrolled ? "text-white" : "text-[#ff3e01]"
-        }`}>HIKARI</span>
-        <span className={`ml-2  text-4xl hidden md:block simbol transition-colors duration-700
-            ${scrolled?" text-[#ff3e01]":"text-white"}`}>i</span>
+        <Link to="/">
+          <span className={`font-bold text-3xl title transition-colors duration-300 ${
+            scrolled ? "text-white" : "text-[#ff3e01]"
+          }`}>HIKARI</span>
+          <span className={`ml-2 text-4xl hidden md:block simbol transition-colors duration-700
+              ${scrolled ? " text-[#ff3e01]" : "text-white"}`}>i</span>
+        </Link>
       </div>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex space-x-8">
-        <a href="#about" className="text-white hover:text-[#ff3e01] transition-colors">Nosotros</a>
-        <a href="#menu" className="text-white hover:text-[#ff3e01] transition-colors">Menú</a>
-        <a href="#gallery" className="text-white hover:text-[#ff3e01] transition-colors">Galería</a>
-        <a href="#contact" className="text-white hover:text-[#ff3e01] transition-colors">Contacto</a>
+        <a 
+          href={isMenuPage ? "/#about" : "#about"} 
+          className="text-white hover:text-[#ff3e01] transition-colors"
+        >
+          Nosotros
+        </a>
+        <a 
+          href={isMenuPage ? "/#menu" : "#menu"} 
+          className="text-white hover:text-[#ff3e01] transition-colors"
+        >
+          Menú
+        </a>
+        <a 
+          href={isMenuPage ? "/#gallery" : "#gallery"} 
+          className="text-white hover:text-[#ff3e01] transition-colors"
+        >
+          Galería
+        </a>
+        <a 
+          href={isMenuPage ? "/#contact" : "#contact"} 
+          className="text-white hover:text-[#ff3e01] transition-colors"
+        >
+          Contacto
+        </a>
         <Link to="/login" className="bg-[#ff3e01] px-4 py-1 rounded-full hover:bg-[#ff3e01]/80 transition-colors">
           Reservar
         </Link>
@@ -69,10 +93,30 @@ function Header ({isMenuOpen, setIsMenuOpen}) {
     {/* Mobile Menu */}
     {isMenuOpen && (
       <div className="md:hidden mt-2 py-3 px-4 space-y-2">
-        <a href="#about" className="block text-white hover:text-[#ff3e01]">Nosotros</a>
-        <a href="#menu" className="block text-white hover:text-[#ff3e01]">Menú</a>
-        <a href="#gallery" className="block text-white hover:text-[#ff3e01]">Galería</a>
-        <a href="#contact" className="block text-white hover:text-[#ff3e01]">Contacto</a>
+        <a 
+          href={isMenuPage ? "/#about" : "#about"} 
+          className="block text-white hover:text-[#ff3e01]"
+        >
+          Nosotros
+        </a>
+        <a 
+          href={isMenuPage ? "/#menu" : "#menu"}  
+          className="block text-white hover:text-[#ff3e01]"
+        >
+          Menú
+        </a>
+        <a 
+          href={isMenuPage ? "/#gallery" : "#gallery"} 
+          className="block text-white hover:text-[#ff3e01]"
+        >
+          Galería
+        </a>
+        <a 
+          href={isMenuPage ? "/#contact" : "#contact"} 
+          className="block text-white hover:text-[#ff3e01]"
+        >
+          Contacto
+        </a>
         <Link to="/login" className="block bg-[#ff3e01] px-4 py-1 rounded-full text-center hover:bg-[#ff3e01]/80 mt-3">
           Reservar
         </Link>
