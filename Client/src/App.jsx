@@ -16,7 +16,6 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/hikari' element={<Hikari />} />
         <Route path='/menu' element={<Menu />} />
-
       </Routes>
     </Router>
   )

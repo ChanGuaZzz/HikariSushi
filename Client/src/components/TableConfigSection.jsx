@@ -19,7 +19,8 @@ function TableConfigSection({
 }) {
   return (
     <div className="w-[30%] min-w-[200px]">
-      <h1>Mesas por hora</h1>
+      <h1>Mesas por hora </h1>
+      <span className="text-xs opacity-30">(Los cambios seran reflejados en un maximo de 7 dias)</span>
       <div className="p-1 flex w-full mt-3 flex-col max-h-[300px] overflow-y-auto">
         {settings.typeOfTables && settings.typeOfTables.length <= 0 && (
           <h1 className="text-xs opacity-35 text-center">No hay Mesas disponibles</h1>

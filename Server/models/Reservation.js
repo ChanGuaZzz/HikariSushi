@@ -12,11 +12,6 @@ class Reservation extends Model {
     this.status = 'cancelled';
   }
 
-  // Método para actualizar una solicitud especial
-  updateSpecialRequest(request) {
-    this.specialRequest = request;
-  }
-
   // Método estático para verificar si hay una reserva en una mesa en una fecha y hora específicas
   static async isTableAvailable(tableNumber, reservationDate) {
     const conflictingReservation = await Reservation.findOne({

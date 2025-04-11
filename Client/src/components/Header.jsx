@@ -96,24 +96,28 @@ function Header ({isMenuOpen, setIsMenuOpen}) {
         <a 
           href={isMenuPage ? "/#about" : "#about"} 
           className="block text-white hover:text-[#ff3e01]"
+          onClick={() => setIsMenuOpen(false)}
         >
           Nosotros
         </a>
         <a 
           href={isMenuPage ? "/#menu" : "#menu"}  
           className="block text-white hover:text-[#ff3e01]"
+          onClick={() => setIsMenuOpen(false)}
         >
           Menú
         </a>
         <a 
           href={isMenuPage ? "/#gallery" : "#gallery"} 
           className="block text-white hover:text-[#ff3e01]"
+          onClick={() => setIsMenuOpen(false)}
         >
           Galería
         </a>
         <a 
           href={isMenuPage ? "/#contact" : "#contact"} 
           className="block text-white hover:text-[#ff3e01]"
+          onClick={() => setIsMenuOpen(false)}
         >
           Contacto
         </a>

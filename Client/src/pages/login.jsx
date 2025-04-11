@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Utensils, Mail, Lock, User, Phone } from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { use } from "react";
 import Loading from "../components/loading";
 
@@ -95,7 +95,7 @@ function Login() {
         <div className={`bg-white p-8 rounded-lg flex flex-col ${!isInLogin?"sm:flex-row sm:max-w-2xl sm:w-[80%]":"sm:max-w-md"} justify-center sm:justify-around shadow-2xl w-full min-h-screen sm:min-h-0  `}>
           <div className="text-center mb-3 flex flex-col items-center justify-center bg-[#]">
             <div className={`flex flex-col justify-center mb-4 `}>
-              <h1 className="simbol text-[#ff3e01] text-8xl">i</h1>
+              <Link to={"/"} className="simbol text-[#ff3e01] text-8xl">i</Link>
               <h1 className="title text-[#5f4842]">Hikari</h1>
             </div>
             <h2 className="text-3xl font-bold text-gray-800">{isInLogin ? "Bienvenido" : "Crear Cuenta"} </h2>
@@ -135,7 +135,7 @@ function Login() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="pl-10 w-full px-4 py-2 border text-black border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Antonio Pérez Lopez"
+                      placeholder="Steven Arjona"
                       required
                     />
                   </div>

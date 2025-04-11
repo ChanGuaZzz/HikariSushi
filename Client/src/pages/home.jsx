@@ -8,31 +8,31 @@ function Home() {
   const menuItems = [
     {
       id: 1,
-      name: "Sushi Premium",
-      price: "$24.99",
-      description: "Selección de nigiri y maki premium con pescado fresco importado y arroz perfectamente sazonado.",
-      image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-4.0.3",
+      name: "Sushi Nigiri",
+      price: 5.99,
+      description: "Arroz con pescado fresco encima.",
+      image: "https://assets.tmecosys.com/image/upload/t_web767x639/img/recipe/ras/Assets/64EF898D-2EDD-4B47-A456-E6A7D137AC91/Derivates/00f76cac-64f6-4573-be4f-e604a7d99143.jpg",
     },
     {
       id: 2,
-      name: "Sushi",
-      price: "$18.99",
+      name: "Sashimi de Salmón",
+      price: 7.49,
       description:
-        "Caldo cremoso de hueso de cerdo cocido a fuego lento por 12 horas con chashu, huevo marinado y fideos artesanales.",
-      image: "https://content-cocina.lecturas.com/medio/2018/07/19/sushi-variado-tradicional_91be2c41_800x800.jpg",
+        "Finas láminas de salmón crudo.",
+      image: "https://www.mardenoruega.es/globalassets/recipes/salmon/sashimi-salmon-new.jpg?width=685&height=685&transform=DownFill&hash=fba299725e710be3904d981c54ac8876",
     },
     {
       id: 3,
-      name: "Wagyu Robatayaki",
-      price: "$32.99",
+      name: "Ramen Tonkotsu",
+      price: 8.99,
       description:
-        "Ternera wagyu premium a la parrilla tradicional japonesa, servida con salsa trufa-ponzu y vegetales a la brasa.",
-      image: "https://images.unsplash.com/photo-1602030638412-bb8dcc0bc8b0?ixlib=rb-4.0.3",
+        "Sopa de fideos con caldo de cerdo y chashu (carne de cerdo).",
+      image: "https://www.craftycookbook.com/wp-content/uploads/2023/04/tonkotsu.jpg",
     },
   ];
 
   const ImgAbout = [
-    "https://images.unsplash.com/photo-1617196701537-7329482cc9fe?ixlib=rb-4.0.3",
+    "https://editorialtelevisa.brightspotcdn.com/dims4/default/b39d0f4/2147483647/strip/true/crop/995x560+3+0/resize/1000x563!/quality/90/?url=https%3A%2F%2Fk2-prod-editorial-televisa.s3.us-east-1.amazonaws.com%2Fbrightspot%2Fwp-content%2Fuploads%2F2019%2F09%2Fcomida-japonesa-cruda.jpg",
     "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?ixlib=rb-4.0.3",
     "https://images.unsplash.com/photo-1611143669185-af224c5e3252?ixlib=rb-4.0.3",
     "https://images.unsplash.com/photo-1553621042-f6e147245754?ixlib=rb-4.0.3",
@@ -168,7 +168,7 @@ function Home() {
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-xl font-bold text-white">{item.name}</h3>
-                    <span className="text-[#ff3e01] font-bold">{item.price}</span>
+                    <span className="text-[#ff3e01] font-bold">{item.price} €</span>
                   </div>
                   <p className="text-white/80 mb-4">{item.description}</p>
                 </div>
@@ -203,7 +203,7 @@ function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {GalleryImages.map((img, index) => (
-              <img src={img} alt="Interior" className="rounded-lg hover:opacity-80 transition-opacity h-52 object-cover w-full" />
+              <img key={index} src={img} alt="Interior" className="rounded-lg hover:opacity-80 transition-opacity h-52 object-cover w-full" />
             ))}
           </div>
         </div>
@@ -221,7 +221,7 @@ function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={testimonial.id} className="bg-[#322a27] p-6 rounded-xl shadow-lg text-white">
+              <div key={index} className="bg-[#322a27] p-6 rounded-xl shadow-lg text-white">
                 <div className="flex items-center mb-4">
                   <div className="flex text-[#ff3e01]">
                     {"★★★★★".split("").map((star, index) => (
@@ -342,7 +342,7 @@ function Home() {
               <div className="bg-white p-3 rounded-xl shadow-lg overflow-hidden h-80">
                 {/* Aquí iría un mapa real usando Google Maps o similar */}
                 <div className="bg-gray-200 h-full w-full rounded-lg flex items-center justify-center">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d50860.986818133046!2d-3.591271749999977!3d37.18094625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd71fce62d32c27d%3A0x9258f79dd3600d72!2sGranada!5e0!3m2!1sen!2ses!4v1744198831560!5m2!1sen!2ses" width="100%" height="100%" className="rounded-md" allowfullscreen="" loading="lazy"></iframe>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d50860.986818133046!2d-3.591271749999977!3d37.18094625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd71fce62d32c27d%3A0x9258f79dd3600d72!2sGranada!5e0!3m2!1sen!2ses!4v1744198831560!5m2!1sen!2ses" width="100%" height="100%" className="rounded-md"loading="lazy"></iframe>
 
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DoorOpen, Calendar, Clock, Users, User, PhoneCall, CircleXIcon, PlusCircle, SaveIcon } from "lucide-react";
 import { use } from "react";
 import ReservationsBox from "../components/ReservationsBox";
@@ -53,7 +53,11 @@ function Hikari() {
   });
 
   const formatDate = (date) => {
-    return date.toISOString().split("T")[0];
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   // Añadir al hikari.jsx después de la definición de estados
@@ -161,8 +165,8 @@ function Hikari() {
   // Get today's date formatted as YYYY-MM-DD
   const today = formatDate(new Date());
 
-  // Get date 2 months from now as the maximum selectable date
-  const maxDate = formatDate(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000));
+  // Get date 5 days from now as the maximum selectable date
+  const maxDate = formatDate(new Date(new Date().setDate(new Date().getDate() + 6)));
 
   // Function to check if a date is a weekend
   // Function to check if a date is unavailable
@@ -193,16 +197,17 @@ function Hikari() {
     if(!settings)return;
 
     const date = new Date(e.target.value);
+    console.log(date, "date");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
   
     const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + 5);
+    maxDate.setDate(today.getDate() + 7);
   
     if (date > maxDate) {
       setIsReserved(false);
       setModal(true);
-      setMessage("No es posible reservar más de 5 días antes de la fecha.");
+      setMessage("No es posible reservar más de 7 días antes de la fecha.");
     } else if (!isUnavailableDate(date)) {
       setSelectedDate(e.target.value);
     } else {
@@ -326,10 +331,10 @@ function Hikari() {
           onClose={() => setShowBlockModal(false)}
         />
       )}
-      <div className=" flex absolute w-full justify-center items-center top-6 ">
+      <Link to={"/"} className=" flex absolute w-full justify-center items-center top-6 ">
         <h1 className="simbol text-4xl px-1 text-[#ff3e01]">i</h1>
         <h1 className=" title px-1 text-[#]">Hikari</h1>
-      </div>
+      </Link>
       <button
         className="absolute top-6 left-6 bg-[#ff851c] hover:opacity-70 shadow-md transition-all active:scale-[0.9] rounded-lg px-2 py-3"
         onClick={handleLogout}
@@ -354,7 +359,7 @@ function Hikari() {
                           type="text"
                           value={nameReservation}
                           onChange={(e) => setNameReservation(e.target.value)}
-                          placeholder="Jose Perez"
+                          placeholder="Steven Arjona"
                           maxLength={30}
                           className="text-center w-full pr-2 h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                           required
@@ -391,7 +396,9 @@ function Hikari() {
                       selected={selectedDate ? new Date(selectedDate) : null}
                       onChange={(date) => {
                         if (date) {
+                          console.log(date, "date");
                           const formattedDate = formatDate(date);
+                          console.log(formattedDate, "formattedDate");
                           handleDateChange({ target: { value: formattedDate } });
                         }
                       }}
