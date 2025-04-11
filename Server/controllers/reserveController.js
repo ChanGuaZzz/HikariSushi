@@ -5,6 +5,7 @@ import DateReservation from "../models/DateReservation.js";
 import { format } from "date-fns";
 import { da, es, se } from "date-fns/locale";
 import Settings from "../models/Settings.js";
+import { getCurrentSpainTime, getDateInSpainTimezone } from "../utils/utils.js";
 
 const html = (status, customerName, date, hour) => {
   const formattedDate = format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", { locale: es });
@@ -219,7 +220,7 @@ const getReservations = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const today = new Date();
+    const today = getCurrentSpainTime();
     today.setHours(0, 0, 0, 0); // Establecer la hora a 00:00:00 para comparar solo la fecha
 
     await Reservation.destroy({
@@ -316,8 +317,14 @@ const getAvailableHours = async (req, res) => {
     }
 
     allHours = settings.allHours;
-    const currentDate = new Date();
-    const requestedDate = new Date(date);
+
+    
+    // Then use both functions
+    const currentDate = getCurrentSpainTime();
+    console.log(currentDate, "CURRENT DATE IN SPAIN");
+    
+    const requestedDate = getDateInSpainTimezone(date);
+    console.log(requestedDate, "REQUESTED DATE IN SPAIN");
 
     for (let i = 0; i < allHours.length; i++) {
       const [hour, minute] = allHours[i].split(":").map(Number);
@@ -327,7 +334,7 @@ const getAvailableHours = async (req, res) => {
       if (requestedDate.toDateString() === currentDate.toDateString()) {
         const timeDifference = reservationTime - currentDate;
         const minutesDifference = timeDifference / (1000 * 60);
-
+        console.log(minutesDifference, "MINUTOS DE DIFERENCIA");
         if (minutesDifference <= 45) {
           continue; // Skip this hour if it's less than 45 minutes away
         }
