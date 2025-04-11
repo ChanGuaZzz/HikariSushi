@@ -40,6 +40,8 @@ function Hikari() {
   const [canreserve, setCanreserve] = useState(true);
   const [nameReservation, setNameReservation] = useState("");
   const [phoneReservation, setPhoneReservation] = useState("");
+  const [loadingHours, setLoadingHours] = useState(false);
+  const [thereHours, setThereHours] = useState(null);
   const [settings, setSettings] = useState({
     allHours: [],
     typeOfTables: [],
@@ -88,14 +90,20 @@ function Hikari() {
 
   useEffect(() => {
     if (selectedDate) {
+      setLoadingHours(true);
+      setThereHours(null);
       axios
         .get(`${import.meta.env.VITE_API_URL}/gethours?date=${selectedDate}`)
         .then((res) => {
+          
           //console.log(res.data);
+
           setAvailableHours(res.data);
+          setThereHours(res.data.length > 0);
+          setLoadingHours(false);
         })
         .catch((err) => {
-          //console.log(err);
+          console.log(err);
         });
 
       //Se pueden 4 reservas por hora, si hay 4 reservas en una hora, se hace una consulta a la base de datos buscando las reservas en esa fecha y hora y si hay 4, se deshabilita esa hora
@@ -428,9 +436,10 @@ function Hikari() {
                       <select
                         className="text-center w-full h-10  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
+                        disabled={loadingHours}
                         onChange={() => setSelectedHour(event.target.value)}
                       >
-                        <option value="">Selecciona una hora</option>
+                        <option value="">{loadingHours?"Cargando Horas":"Selecciona una hora"}</option>
                         {AvailableHours.map((hour, index) => {
                           return (
                             <option key={index} value={hour.hour} disabled={!hour.available}>
@@ -445,7 +454,7 @@ function Hikari() {
                         required
                         disabled
                       >
-                        <option value="">Selecciona una fecha</option>
+                        <option value="">{thereHours==false?"No hay horas disponibles":"Selecciona una fecha"}</option>
                       </select>
                     )}
                   </div>
