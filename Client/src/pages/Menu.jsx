@@ -161,7 +161,7 @@ function Menu() {
 
   // Función para volver al inicio de la página
   const backToTopMenu = () => {
-    window.scrollTo({ top: 425, behavior: "smooth" });
+    window.scrollTo({ top: 470, behavior: "smooth" });
   };
 
 
