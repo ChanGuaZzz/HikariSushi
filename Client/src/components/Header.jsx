@@ -64,20 +64,37 @@ function Header({ isMenuOpen, setIsMenuOpen }) {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-8">
-          <>
-            <a href={"#about"} className="text-white hover:text-[#ff3e01] transition-colors">
-              Nosotros
-            </a>
-            <a href={"#menu"} className="text-white hover:text-[#ff3e01] transition-colors">
-              Menú
-            </a>
-            <a href={"#gallery"} className="text-white hover:text-[#ff3e01] transition-colors">
-              Galería
-            </a>
-            <a href={"#contact"} className="text-white hover:text-[#ff3e01] transition-colors">
-              Contacto
-            </a>
-          </>
+          {!isMenuPage ? (
+            <>
+              <a href={"#about"} className="text-white hover:text-[#ff3e01] transition-colors">
+                Nosotros
+              </a>
+              <a href={"#menu"} className="text-white hover:text-[#ff3e01] transition-colors">
+                Menú
+              </a>
+              <a href={"#gallery"} className="text-white hover:text-[#ff3e01] transition-colors">
+                Galería
+              </a>
+              <a href={"#contact"} className="text-white hover:text-[#ff3e01] transition-colors">
+                Contacto
+              </a>
+            </>
+          ) : (
+            <>
+              <Link to="/" className="text-white hover:text-[#ff3e01] transition-colors">
+                Nosotros
+              </Link>
+              <Link to="/" className="text-white hover:text-[#ff3e01] transition-colors">
+                Menú
+              </Link>
+              <Link to="/" className="text-white hover:text-[#ff3e01] transition-colors">
+                Galería
+              </Link>
+              <Link to="/" className="text-white hover:text-[#ff3e01] transition-colors">
+                Contacto
+              </Link>
+            </>
+          )}
 
           <Link to="/login" className="bg-[#ff3e01] px-4 py-1 rounded-full hover:bg-[#ff3e01]/80 transition-colors">
             Reservar
@@ -137,16 +154,28 @@ function Header({ isMenuOpen, setIsMenuOpen }) {
             </>
           ) : (
             <>
-              <Link to="/" className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]">
+              <Link
+                to="/"
+                className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]"
+              >
                 Nosotros
               </Link>
-              <Link to="/" className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]">
+              <Link
+                to="/"
+                className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]"
+              >
                 Menú
               </Link>
-              <Link to="/" className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]">
+              <Link
+                to="/"
+                className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]"
+              >
                 Galería
               </Link>
-              <Link to="/" className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]">
+              <Link
+                to="/"
+                className="block border-b-white/10 border-b-[1px] bg-black/0 hover:bg-black/40 transition-all  rounded-md p-2 text-white hover:text-[#ff3e01]"
+              >
                 Contacto
               </Link>
               <Link to="/login" className="block bg-[#ff3e01] px-4 py-3 rounded-full text-center hover:bg-[#ff3e01]/80 mt-3">
