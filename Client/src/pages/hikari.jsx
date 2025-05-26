@@ -57,8 +57,8 @@ function Hikari() {
   const formatDate = (date) => {
     const d = new Date(date);
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -95,7 +95,6 @@ function Hikari() {
       axios
         .get(`${import.meta.env.VITE_API_URL}/gethours?date=${selectedDate}`)
         .then((res) => {
-          
           //console.log(res.data);
 
           setAvailableHours(res.data);
@@ -179,39 +178,37 @@ function Hikari() {
   // Function to check if a date is a weekend
   // Function to check if a date is unavailable
   const isUnavailableDate = (date) => {
-
     // If date is empty or invalid, return false
     if (!date) return false;
-    
+
     const d = new Date(date);
-    
+
     // Check if date is valid before proceeding
     if (isNaN(d.getTime())) return false;
-    
+
     // Check if it's a Sunday
     const isSunday = d.getDay() === 0; // 0 = Sunday
-    
+
     // Format the date to match YYYY-MM-DD format for comparison
-    const formattedDate = d.toISOString().split('T')[0];
-    
+    const formattedDate = d.toISOString().split("T")[0];
+
     // Check if the date is in the custom disabled dates array
-    const isDisabled = settings.unavailableDates?.includes(formattedDate) || false;    
+    const isDisabled = settings.unavailableDates?.includes(formattedDate) || false;
     // Return true if either condition is met
     return isSunday || isDisabled;
   };
 
   const handleDateChange = (e) => {
-
-    if(!settings)return;
+    if (!settings) return;
 
     const date = new Date(e.target.value);
     console.log(date, "date");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-  
+
     const maxDate = new Date(today);
     maxDate.setDate(today.getDate() + 7);
-  
+
     if (date > maxDate) {
       setIsReserved(false);
       setModal(true);
@@ -254,7 +251,7 @@ function Hikari() {
           putReservations(res.data.user.role);
           setRole(res.data.user.role);
           setLoading(false);
-          
+
           if (res.data.user.role == "admin") {
             axios
               .get(`${import.meta.env.VITE_API_URL}/getSettings`, { withCredentials: true })
@@ -432,22 +429,22 @@ function Hikari() {
                     <div className="   mx-2 flex items-center pointer-events-none">
                       <Clock className="h-5 w-5 text-gray-400" />
                     </div>
-                    {
-                      !selectedDate?
+                    {!selectedDate ? (
                       <select
                         className="text-center  w-full h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
                         disabled
                       >
                         <option value="">Selecciona una fecha</option>
-                      </select>:AvailableHours.length > 0 ? (
+                      </select>
+                    ) : AvailableHours.length > 0 ? (
                       <select
                         className="text-center w-full h-10  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
                         disabled={loadingHours}
                         onChange={() => setSelectedHour(event.target.value)}
                       >
-                        <option value="">{loadingHours?"Cargando Horas":"Selecciona una hora"}</option>
+                        <option value="">{loadingHours ? "Cargando Horas" : "Selecciona una hora"}</option>
                         {AvailableHours.map((hour, index) => {
                           return (
                             <option key={index} value={hour.hour} disabled={!hour.available}>
@@ -462,7 +459,7 @@ function Hikari() {
                         required
                         disabled
                       >
-                        <option value="">{"No hay horas disponibles"}</option>
+                        <option value="">{loadingHours ? "Cargando Horas":"No hay horas disponibles"}</option>
                       </select>
                     )}
                   </div>
