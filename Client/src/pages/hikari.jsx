@@ -432,7 +432,15 @@ function Hikari() {
                     <div className="   mx-2 flex items-center pointer-events-none">
                       <Clock className="h-5 w-5 text-gray-400" />
                     </div>
-                    {AvailableHours.length > 0 ? (
+                    {
+                      !selectedDate?
+                      <select
+                        className="text-center  w-full h-10 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        required
+                        disabled
+                      >
+                        <option value="">Selecciona una fecha</option>
+                      </select>:AvailableHours.length > 0 ? (
                       <select
                         className="text-center w-full h-10  py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                         required
@@ -454,7 +462,7 @@ function Hikari() {
                         required
                         disabled
                       >
-                        <option value="">{thereHours==false?"No hay horas disponibles":"Selecciona una fecha"}</option>
+                        <option value="">{"No hay horas disponibles"}</option>
                       </select>
                     )}
                   </div>
